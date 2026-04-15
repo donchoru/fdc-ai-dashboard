@@ -22,7 +22,7 @@ function Skeleton({ className = '' }: { className?: string }) {
   return (
     <div
       className={`rounded-lg animate-pulse ${className}`}
-      style={{ background: 'rgba(255,255,255,0.06)' }}
+      style={{ background: '#f1f5f9' }}
       aria-hidden="true"
     />
   );
@@ -83,7 +83,7 @@ function SectionHeader({
         />
       )}
       <div>
-        <h2 className="text-sm font-semibold text-white">{title}</h2>
+        <h2 className="text-sm font-semibold text-slate-900">{title}</h2>
         {subtitle && (
           <p className="text-xs mt-0.5" style={{ color: 'var(--muted)' }}>
             {subtitle}
@@ -138,7 +138,7 @@ function AnomalyCard({
               {scenario.id}
             </span>
           </div>
-          <p className="text-sm font-semibold text-white/90 leading-snug">
+          <p className="text-sm font-semibold text-slate-800 leading-snug">
             {scenario.description}
           </p>
         </div>
@@ -158,9 +158,9 @@ function AnomalyCard({
               key={param}
               className="text-[10px] px-1.5 py-0.5 rounded font-mono"
               style={{
-                background: 'rgba(255,255,255,0.06)',
-                color: '#94a3b8',
-                border: '1px solid rgba(255,255,255,0.08)',
+                background: '#f1f5f9',
+                color: '#64748b',
+                border: '1px solid #e2e8f0',
               }}
             >
               {param}
@@ -174,22 +174,22 @@ function AnomalyCard({
         className="rounded-lg p-3"
         style={{
           background: 'rgba(245,158,11,0.06)',
-          border: '1px solid rgba(245,158,11,0.15)',
+          border: '1px solid rgba(245,158,11,0.2)',
         }}
       >
         <p
           className="text-[10px] uppercase tracking-wider mb-1"
-          style={{ color: '#f59e0b' }}
+          style={{ color: '#d97706' }}
         >
           Root Cause Hint
         </p>
-        <p className="text-xs leading-relaxed" style={{ color: '#fcd34d' }}>
+        <p className="text-xs leading-relaxed" style={{ color: '#92400e' }}>
           {scenario.rootCause}
         </p>
         {scenario.semiReference && (
           <p
             className="text-[10px] mt-1.5 font-mono"
-            style={{ color: 'rgba(245,158,11,0.6)' }}
+            style={{ color: '#d97706' }}
           >
             {scenario.semiReference}
           </p>
@@ -201,16 +201,17 @@ function AnomalyCard({
         onClick={() => onAnalyze(scenario)}
         className="w-full py-2 rounded-lg text-xs font-semibold text-white transition-all duration-150 flex items-center justify-center gap-2"
         style={{
-          background: 'linear-gradient(135deg, rgba(99,102,241,0.25), rgba(79,70,229,0.25))',
-          border: '1px solid rgba(99,102,241,0.35)',
+          background: 'linear-gradient(135deg, #6366f1, #4f46e5)',
+          border: '1px solid rgba(99,102,241,0.3)',
+          boxShadow: '0 2px 8px rgba(99,102,241,0.25)',
         }}
         onMouseEnter={(e) => {
-          (e.currentTarget as HTMLButtonElement).style.background =
-            'linear-gradient(135deg, rgba(99,102,241,0.4), rgba(79,70,229,0.4))';
+          (e.currentTarget as HTMLButtonElement).style.boxShadow =
+            '0 4px 14px rgba(99,102,241,0.4)';
         }}
         onMouseLeave={(e) => {
-          (e.currentTarget as HTMLButtonElement).style.background =
-            'linear-gradient(135deg, rgba(99,102,241,0.25), rgba(79,70,229,0.25))';
+          (e.currentTarget as HTMLButtonElement).style.boxShadow =
+            '0 2px 8px rgba(99,102,241,0.25)';
         }}
         aria-label={`AI 분석: ${scenario.description}`}
       >
@@ -246,15 +247,15 @@ function LineBadge({ line }: { line: string }) {
           background: isFabA
             ? 'rgba(99,102,241,0.15)'
             : 'rgba(34,197,94,0.15)',
-          color: isFabA ? '#818cf8' : '#86efac',
-          border: `1px solid ${isFabA ? 'rgba(99,102,241,0.3)' : 'rgba(34,197,94,0.3)'}`,
+          color: isFabA ? '#4f46e5' : '#16a34a',
+          border: `1px solid ${isFabA ? 'rgba(99,102,241,0.25)' : 'rgba(34,197,94,0.25)'}`,
         }}
       >
         {line}
       </span>
       <div
         className="flex-1 h-px"
-        style={{ background: 'rgba(255,255,255,0.06)' }}
+        style={{ background: '#e2e8f0' }}
         aria-hidden="true"
       />
     </div>
@@ -619,7 +620,7 @@ function DashboardContent() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Equipment status */}
           <GlassCard solid className="p-5">
-            <h3 className="text-sm font-semibold text-white mb-4">
+            <h3 className="text-sm font-semibold text-slate-900 mb-4">
               Equipment Status Distribution
             </h3>
             {kpiLoading ? (
@@ -673,7 +674,7 @@ function DashboardContent() {
 
           {/* Alarm severity */}
           <GlassCard solid className="p-5">
-            <h3 className="text-sm font-semibold text-white mb-4">
+            <h3 className="text-sm font-semibold text-slate-900 mb-4">
               Alarm Severity Distribution
             </h3>
             {kpiLoading ? (
@@ -726,7 +727,7 @@ function DashboardContent() {
                   {kpiData?.oee !== undefined && (
                     <div
                       className="mt-2 pt-2 flex items-center justify-between gap-3"
-                      style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}
+                      style={{ borderTop: '1px solid #f1f5f9' }}
                     >
                       <span className="text-xs" style={{ color: '#64748b' }}>
                         OEE
@@ -866,15 +867,15 @@ export default function DashboardPage() {
               >
                 <div
                   className="rounded-lg animate-pulse h-8 w-8"
-                  style={{ background: 'rgba(255,255,255,0.06)' }}
+                  style={{ background: '#f1f5f9' }}
                 />
                 <div
                   className="rounded-lg animate-pulse h-8 w-24"
-                  style={{ background: 'rgba(255,255,255,0.06)' }}
+                  style={{ background: '#f1f5f9' }}
                 />
                 <div
                   className="rounded-lg animate-pulse h-3 w-32"
-                  style={{ background: 'rgba(255,255,255,0.06)' }}
+                  style={{ background: '#f1f5f9' }}
                 />
               </div>
             ))}

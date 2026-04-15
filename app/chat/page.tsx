@@ -67,13 +67,13 @@ function ConfigWarning() {
       <AlertCircle
         size={16}
         className="mt-0.5 flex-shrink-0"
-        style={{ color: '#fcd34d' }}
+        style={{ color: '#d97706' }}
       />
       <div>
-        <p className="text-sm font-medium" style={{ color: '#fcd34d' }}>
+        <p className="text-sm font-medium" style={{ color: '#92400e' }}>
           LLM API 키가 설정되지 않았습니다
         </p>
-        <p className="mt-1 text-xs leading-relaxed" style={{ color: '#92400e' }}>
+        <p className="mt-1 text-xs leading-relaxed" style={{ color: '#78350f' }}>
           AI 채팅 기능을 사용하려면 Settings 페이지에서 API 키를 설정하세요.
         </p>
         <a
@@ -103,8 +103,8 @@ function QuickChips({ onSelect, disabled }: QuickChipsProps) {
     <div
       className="rounded-2xl p-4"
       style={{
-        background: 'rgba(255,255,255,0.02)',
-        border: '1px solid rgba(255,255,255,0.06)',
+        background: '#f8fafc',
+        border: '1px solid #e2e8f0',
       }}
     >
       <p
@@ -122,22 +122,22 @@ function QuickChips({ onSelect, disabled }: QuickChipsProps) {
             disabled={disabled}
             className="flex items-center gap-2.5 rounded-xl px-3.5 py-3 text-left transition-all duration-150"
             style={{
-              background: 'rgba(255,255,255,0.03)',
-              border: '1px solid rgba(255,255,255,0.07)',
+              background: '#f1f5f9',
+              border: '1px solid #e2e8f0',
               cursor: disabled ? 'not-allowed' : 'pointer',
               opacity: disabled ? 0.5 : 1,
             }}
             onMouseEnter={(e) => {
               if (!disabled) {
                 const el = e.currentTarget as HTMLButtonElement;
-                el.style.background = 'rgba(99,102,241,0.08)';
+                el.style.background = 'rgba(99,102,241,0.06)';
                 el.style.borderColor = 'rgba(99,102,241,0.2)';
               }
             }}
             onMouseLeave={(e) => {
               const el = e.currentTarget as HTMLButtonElement;
-              el.style.background = 'rgba(255,255,255,0.03)';
-              el.style.borderColor = 'rgba(255,255,255,0.07)';
+              el.style.background = '#f1f5f9';
+              el.style.borderColor = '#e2e8f0';
             }}
             aria-label={`빠른 질문: ${label}`}
           >
@@ -148,7 +148,7 @@ function QuickChips({ onSelect, disabled }: QuickChipsProps) {
               <Icon size={13} style={{ color: 'var(--accent-light)' }} />
             </div>
             <div>
-              <p className="text-xs font-medium text-white">{label}</p>
+              <p className="text-xs font-medium text-slate-800">{label}</p>
               <p
                 className="mt-0.5 line-clamp-1 text-[10px] leading-relaxed"
                 style={{ color: '#64748b' }}
@@ -171,8 +171,8 @@ function StatusBar({ messageCount }: { messageCount: number }) {
     <div
       className="flex items-center gap-4 rounded-xl px-3.5 py-2"
       style={{
-        background: 'rgba(255,255,255,0.02)',
-        border: '1px solid rgba(255,255,255,0.06)',
+        background: '#f8fafc',
+        border: '1px solid #e2e8f0',
       }}
     >
       <div className="flex items-center gap-1.5">
@@ -190,7 +190,7 @@ function StatusBar({ messageCount }: { messageCount: number }) {
       </div>
       <span
         className="h-3 w-[1px]"
-        style={{ background: 'rgba(255,255,255,0.08)' }}
+        style={{ background: '#e2e8f0' }}
       />
       <div className="flex items-center gap-1.5">
         <Activity size={11} style={{ color: '#475569' }} />
@@ -202,7 +202,7 @@ function StatusBar({ messageCount }: { messageCount: number }) {
         <>
           <span
             className="h-3 w-[1px]"
-            style={{ background: 'rgba(255,255,255,0.08)' }}
+            style={{ background: '#e2e8f0' }}
           />
           <span
             className="ml-auto rounded-full px-2 py-0.5 text-[10px] font-semibold tabular-nums"
@@ -362,7 +362,7 @@ export default function ChatPage() {
               <MessageSquare size={20} style={{ color: 'var(--accent-light)' }} />
             </div>
             <div>
-              <h1 className="text-2xl font-bold tracking-tight text-white">
+              <h1 className="text-2xl font-bold tracking-tight text-slate-900">
                 Ask AI — FDC Assistant
               </h1>
               <p
@@ -406,7 +406,7 @@ export default function ChatPage() {
         {/* ── Disclaimer ── */}
         <p
           className="mt-3 text-center text-xs"
-          style={{ color: '#1e293b' }}
+          style={{ color: '#94a3b8' }}
         >
           AI 응답은 참고용입니다. 설비 제어 및 공정 변경 전 반드시 담당 엔지니어가 확인하세요.
         </p>

@@ -54,7 +54,7 @@ export default function EquipmentCard({
             aria-label={`Status: ${STATUS_LABELS[equipment.status]}`}
           />
           <div className="min-w-0">
-            <p className="text-sm font-semibold text-white truncate leading-tight">
+            <p className="text-sm font-semibold text-slate-900 truncate leading-tight">
               {equipment.name}
             </p>
             <p className="text-xs truncate mt-0.5" style={{ color: 'var(--muted)' }}>
@@ -69,9 +69,9 @@ export default function EquipmentCard({
             <span
               className="inline-flex items-center justify-center text-[10px] font-bold rounded-full px-1.5 py-0.5 leading-none"
               style={{
-                background: 'rgba(239, 68, 68, 0.18)',
-                color: '#fca5a5',
-                border: '1px solid rgba(239, 68, 68, 0.35)',
+                background: 'rgba(239, 68, 68, 0.08)',
+                color: '#dc2626',
+                border: '1px solid rgba(239, 68, 68, 0.2)',
               }}
               aria-label={`${alarmCount} active alarm${alarmCount > 1 ? 's' : ''}`}
             >
@@ -82,9 +82,9 @@ export default function EquipmentCard({
             <span
               className="inline-flex items-center justify-center text-[10px] font-bold rounded-full px-1.5 py-0.5 leading-none"
               style={{
-                background: 'rgba(245, 158, 11, 0.18)',
-                color: '#fcd34d',
-                border: '1px solid rgba(245, 158, 11, 0.35)',
+                background: 'rgba(245, 158, 11, 0.08)',
+                color: '#d97706',
+                border: '1px solid rgba(245, 158, 11, 0.2)',
               }}
               aria-label={`${oosCount} out-of-spec parameter${oosCount > 1 ? 's' : ''}`}
             >
@@ -103,7 +103,7 @@ export default function EquipmentCard({
       </div>
 
       {/* Footer: status pill + wafer count */}
-      <div className="flex items-center justify-between pt-1 border-t border-white/5">
+      <div className="flex items-center justify-between pt-1 border-t border-slate-100">
         <span
           className="text-[11px] font-semibold uppercase px-2 py-0.5 rounded-full"
           style={{
@@ -128,7 +128,7 @@ function MetaItem({ label, value }: { label: string; value: string }) {
       <p className="text-[10px] uppercase tracking-wider truncate" style={{ color: 'var(--muted)' }}>
         {label}
       </p>
-      <p className="text-xs font-medium text-white/80 truncate">{value}</p>
+      <p className="text-xs font-medium text-slate-700 truncate">{value}</p>
     </div>
   );
 }

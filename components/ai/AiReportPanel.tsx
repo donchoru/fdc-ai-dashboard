@@ -30,7 +30,7 @@ function renderMarkdown(text: string, isStreaming: boolean): React.ReactNode {
         {parts.map((part, i) => {
           if (part.startsWith('**') && part.endsWith('**')) {
             return (
-              <strong key={i} className="font-semibold text-white">
+              <strong key={i} className="font-semibold text-slate-900">
                 {part.slice(2, -2)}
               </strong>
             );
@@ -57,9 +57,9 @@ function renderMarkdown(text: string, isStreaming: boolean): React.ReactNode {
             key={`code-${codeBlockKey++}`}
             className="my-3 overflow-x-auto rounded-lg p-3 text-xs font-mono leading-relaxed"
             style={{
-              background: 'rgba(0,0,0,0.4)',
-              border: '1px solid rgba(255,255,255,0.08)',
-              color: '#a5f3fc',
+              background: '#f8fafc',
+              border: '1px solid #e2e8f0',
+              color: '#0e7490',
             }}
           >
             <code>{blockContent}</code>
@@ -115,7 +115,7 @@ function renderMarkdown(text: string, isStreaming: boolean): React.ReactNode {
         <li
           key={idx}
           className="mb-1 flex items-start gap-2 text-sm leading-relaxed"
-          style={{ color: '#cbd5e1' }}
+          style={{ color: '#475569' }}
         >
           <span
             className="mt-[6px] h-1.5 w-1.5 flex-shrink-0 rounded-full"
@@ -135,12 +135,12 @@ function renderMarkdown(text: string, isStreaming: boolean): React.ReactNode {
           <li
             key={idx}
             className="mb-1 flex items-start gap-2 text-sm leading-relaxed"
-            style={{ color: '#cbd5e1' }}
+            style={{ color: '#475569' }}
           >
             <span
               className="mt-[2px] flex h-4 w-4 flex-shrink-0 items-center justify-center rounded text-xs font-bold"
               style={{
-                background: 'rgba(99,102,241,0.2)',
+                background: 'rgba(99,102,241,0.1)',
                 color: 'var(--accent-light)',
                 fontSize: '0.6rem',
               }}
@@ -160,7 +160,7 @@ function renderMarkdown(text: string, isStreaming: boolean): React.ReactNode {
         <hr
           key={idx}
           className="my-3"
-          style={{ borderColor: 'rgba(255,255,255,0.08)' }}
+          style={{ borderColor: '#e2e8f0' }}
         />
       );
       return;
@@ -178,7 +178,7 @@ function renderMarkdown(text: string, isStreaming: boolean): React.ReactNode {
       <p
         key={idx}
         className={`text-sm leading-relaxed${isLastLine ? ' cursor-blink' : ''}`}
-        style={{ color: '#cbd5e1' }}
+        style={{ color: '#475569' }}
       >
         {renderInline(line, `p-inner-${idx}`)}
       </p>
@@ -232,17 +232,17 @@ export default function AiReportPanel({
       {/* ── Header ── */}
       <div
         className="flex items-center justify-between p-4"
-        style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}
+        style={{ borderBottom: '1px solid #e2e8f0' }}
       >
         <div className="flex items-center gap-2.5">
           <div
             className="flex h-8 w-8 items-center justify-center rounded-lg"
-            style={{ background: 'rgba(99,102,241,0.15)' }}
+            style={{ background: 'rgba(99,102,241,0.08)' }}
           >
             <FileText size={15} style={{ color: 'var(--accent-light)' }} />
           </div>
           <div>
-            <h3 className="text-sm font-semibold text-white">{title}</h3>
+            <h3 className="text-sm font-semibold text-slate-900">{title}</h3>
             <p className="text-xs" style={{ color: 'var(--muted)' }}>
               {isStreaming ? '생성 중...' : content ? 'AI 분석 완료' : '리포트를 생성하세요'}
             </p>
@@ -256,7 +256,7 @@ export default function AiReportPanel({
               onClick={() => setCollapsed((v) => !v)}
               className="flex h-7 w-7 items-center justify-center rounded-lg transition-colors"
               style={{
-                background: 'rgba(255,255,255,0.05)',
+                background: '#f1f5f9',
                 color: '#64748b',
               }}
               aria-label={collapsed ? '펼치기' : '접기'}
@@ -307,8 +307,8 @@ export default function AiReportPanel({
               }}
               role="alert"
             >
-              <AlertCircle size={15} className="mt-0.5 flex-shrink-0" style={{ color: '#fca5a5' }} />
-              <p className="text-sm" style={{ color: '#fca5a5' }}>
+              <AlertCircle size={15} className="mt-0.5 flex-shrink-0" style={{ color: '#dc2626' }} />
+              <p className="text-sm" style={{ color: '#dc2626' }}>
                 {error}
               </p>
             </div>
@@ -333,10 +333,10 @@ export default function AiReportPanel({
               >
                 <FileText size={22} style={{ color: 'rgba(99,102,241,0.4)' }} />
               </div>
-              <p className="text-sm font-medium" style={{ color: '#475569' }}>
+              <p className="text-sm font-medium" style={{ color: '#64748b' }}>
                 리포트 없음
               </p>
-              <p className="mt-1 text-xs" style={{ color: '#334155' }}>
+              <p className="mt-1 text-xs" style={{ color: '#94a3b8' }}>
                 "생성" 버튼을 눌러 AI 분석을 시작하세요
               </p>
             </div>

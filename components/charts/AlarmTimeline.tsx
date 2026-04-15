@@ -9,9 +9,9 @@ interface AlarmTimelineProps {
 }
 
 const SEVERITY_BG: Record<string, string> = {
-  CRITICAL: 'rgba(239,68,68,0.15)',
-  WARNING: 'rgba(245,158,11,0.15)',
-  INFO: 'rgba(59,130,246,0.15)',
+  CRITICAL: 'rgba(239,68,68,0.06)',
+  WARNING: 'rgba(245,158,11,0.06)',
+  INFO: 'rgba(59,130,246,0.06)',
 };
 
 const SEVERITY_LABEL: Record<string, string> = {
@@ -80,7 +80,7 @@ export default function AlarmTimeline({
               className="flex flex-col items-end flex-shrink-0 pt-1"
               style={{ width: 56 }}
             >
-              <span style={{ color: '#e2e8f0', fontSize: 11, fontWeight: 600, lineHeight: 1 }}>
+              <span style={{ color: '#1e293b', fontSize: 11, fontWeight: 600, lineHeight: 1 }}>
                 {formatTime(alarm.timestamp)}
               </span>
               <span style={{ color: 'var(--muted)', fontSize: 9, marginTop: 2 }}>
@@ -99,7 +99,7 @@ export default function AlarmTimeline({
                   boxShadow: `0 0 8px ${dotColor}80`,
                   flexShrink: 0,
                   marginTop: 3,
-                  border: '2px solid rgba(255,255,255,0.15)',
+                  border: '2px solid #ffffff',
                 }}
                 aria-hidden="true"
               />
@@ -109,7 +109,7 @@ export default function AlarmTimeline({
                     width: 1.5,
                     flex: 1,
                     minHeight: 16,
-                    background: 'rgba(255,255,255,0.07)',
+                    background: '#e2e8f0',
                     marginTop: 3,
                     marginBottom: 3,
                   }}
@@ -138,7 +138,7 @@ export default function AlarmTimeline({
                   </span>
                   <span
                     className="text-xs font-semibold truncate"
-                    style={{ color: '#e2e8f0' }}
+                    style={{ color: '#1e293b' }}
                   >
                     {alarm.alarmName}
                   </span>
@@ -158,7 +158,7 @@ export default function AlarmTimeline({
                 >
                   {alarm.equipmentName}
                 </span>
-                <span style={{ color: 'rgba(255,255,255,0.15)', flexShrink: 0 }}>·</span>
+                <span style={{ color: '#cbd5e1', flexShrink: 0 }}>·</span>
                 <span
                   className="text-[11px] truncate flex-1"
                   style={{ color: 'var(--muted)' }}

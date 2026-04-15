@@ -70,7 +70,7 @@ function StatPill({
       </span>
       <span
         style={{
-          color: warn ? '#fcd34d' : '#a5b4fc',
+          color: warn ? '#d97706' : '#4f46e5',
           fontSize: 12,
           fontWeight: 700,
           lineHeight: 1.3,
@@ -105,15 +105,15 @@ function OocViolationList({ item }: { item: SpcItem }) {
           <span
             className="flex-shrink-0 w-5 h-5 flex items-center justify-center rounded-full text-[10px] font-bold mt-0.5"
             style={{
-              background: 'rgba(239,68,68,0.2)',
-              color: '#fca5a5',
-              border: '1px solid rgba(239,68,68,0.35)',
+              background: 'rgba(239,68,68,0.08)',
+              color: '#dc2626',
+              border: '1px solid rgba(239,68,68,0.2)',
             }}
             aria-hidden="true"
           >
             {v.rule}
           </span>
-          <p className="text-[11px] leading-snug" style={{ color: '#fca5a5' }}>
+          <p className="text-[11px] leading-snug" style={{ color: '#dc2626' }}>
             {v.message}
           </p>
         </div>
@@ -143,16 +143,16 @@ function ChartCard({
       className="rounded-2xl p-4 transition-all duration-300"
       style={{
         background: isHighlighted
-          ? 'rgba(239,68,68,0.08)'
+          ? 'rgba(239,68,68,0.06)'
           : isOoc
-          ? 'rgba(239,68,68,0.04)'
-          : 'rgba(255,255,255,0.04)',
+          ? 'rgba(239,68,68,0.03)'
+          : '#ffffff',
         border: `1px solid ${isHighlighted ? 'rgba(239,68,68,0.5)' : accentColor}`,
         boxShadow: isHighlighted
-          ? '0 0 0 2px rgba(239,68,68,0.2), 0 8px 32px rgba(0,0,0,0.3)'
+          ? '0 0 0 2px rgba(239,68,68,0.15), 0 4px 16px rgba(0,0,0,0.08)'
           : isOoc
-          ? '0 4px 20px rgba(0,0,0,0.2)'
-          : 'none',
+          ? '0 2px 8px rgba(0,0,0,0.06)'
+          : '0 1px 3px rgba(0,0,0,0.04)',
       }}
       aria-label={`SPC chart: ${item.name}`}
     >
@@ -220,7 +220,7 @@ function LoadingSkeleton() {
           <div
             key={i}
             className="rounded-2xl h-28"
-            style={{ background: 'rgba(255,255,255,0.04)' }}
+            style={{ background: '#f1f5f9' }}
           />
         ))}
       </div>
@@ -230,7 +230,7 @@ function LoadingSkeleton() {
           <div
             key={i}
             className="rounded-2xl h-72"
-            style={{ background: 'rgba(255,255,255,0.04)' }}
+            style={{ background: '#f1f5f9' }}
           />
         ))}
       </div>
@@ -292,7 +292,7 @@ export default function SpcPage() {
       <header>
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <div>
-            <h1 className="text-2xl font-bold text-white leading-tight">
+            <h1 className="text-2xl font-bold text-slate-900 leading-tight">
               SPC Control Charts
             </h1>
             <p className="mt-1 text-sm" style={{ color: '#64748b' }}>
@@ -313,8 +313,8 @@ export default function SpcPage() {
             <div
               className="flex items-center gap-4 px-4 py-2.5 rounded-xl"
               style={{
-                background: 'rgba(255,255,255,0.04)',
-                border: '1px solid rgba(255,255,255,0.09)',
+                background: '#f8fafc',
+                border: '1px solid #e2e8f0',
               }}
             >
               <div className="text-center">
@@ -339,7 +339,7 @@ export default function SpcPage() {
                 <>
                   <div
                     className="w-px h-8 self-center"
-                    style={{ background: 'rgba(255,255,255,0.08)' }}
+                    style={{ background: '#e2e8f0' }}
                     aria-hidden="true"
                   />
                   <div className="text-center">
@@ -428,16 +428,16 @@ export default function SpcPage() {
           role="alert"
         >
           <span className="text-lg" aria-hidden="true">⚠</span>
-          <p className="text-sm" style={{ color: '#fca5a5' }}>
+          <p className="text-sm" style={{ color: '#dc2626' }}>
             {error}
           </p>
           <button
             onClick={fetchSpc}
             className="ml-auto text-xs px-3 py-1 rounded-lg transition-colors"
             style={{
-              background: 'rgba(239,68,68,0.15)',
-              color: '#fca5a5',
-              border: '1px solid rgba(239,68,68,0.3)',
+              background: 'rgba(239,68,68,0.08)',
+              color: '#dc2626',
+              border: '1px solid rgba(239,68,68,0.2)',
             }}
           >
             Retry
@@ -467,7 +467,7 @@ export default function SpcPage() {
       {!loading && !error && items.length === 0 && (
         <GlassCard className="p-12 flex flex-col items-center justify-center gap-3">
           <span className="text-4xl" aria-hidden="true">📈</span>
-          <p className="text-sm font-medium text-white/60">
+          <p className="text-sm font-medium text-slate-500">
             No SPC data for the selected process
           </p>
         </GlassCard>
@@ -479,7 +479,7 @@ export default function SpcPage() {
           <div className="flex items-center gap-2 mb-4">
             <span className="text-lg" aria-hidden="true">🧪</span>
             <div>
-              <h2 className="text-sm font-semibold text-white">
+              <h2 className="text-sm font-semibold text-slate-900">
                 OOC Scenario Demo
               </h2>
               <p className="text-[11px] mt-0.5" style={{ color: '#64748b' }}>
@@ -511,18 +511,18 @@ export default function SpcPage() {
                       <option
                         key={s.id}
                         value={s.id}
-                        style={{ background: '#0f172a' }}
+                        style={{ background: '#ffffff' }}
                       >
                         {s.name}
                       </option>
                     ))
                   : (
                     <>
-                      <option value="NORMAL" style={{ background: '#0f172a' }}>Normal Operation</option>
-                      <option value="OOC-DRIFT" style={{ background: '#0f172a' }}>Gate CD Drift (Rule 3)</option>
-                      <option value="OOC-SHIFT" style={{ background: '#0f172a' }}>Overlay X Shift (Rule 2)</option>
-                      <option value="OOC-SPIKE" style={{ background: '#0f172a' }}>CMP Rate Spike (Rule 1)</option>
-                      <option value="OOC-OSCILLATION" style={{ background: '#0f172a' }}>Oxide Thickness Oscillation (Rule 4)</option>
+                      <option value="NORMAL" style={{ background: '#ffffff' }}>Normal Operation</option>
+                      <option value="OOC-DRIFT" style={{ background: '#ffffff' }}>Gate CD Drift (Rule 3)</option>
+                      <option value="OOC-SHIFT" style={{ background: '#ffffff' }}>Overlay X Shift (Rule 2)</option>
+                      <option value="OOC-SPIKE" style={{ background: '#ffffff' }}>CMP Rate Spike (Rule 1)</option>
+                      <option value="OOC-OSCILLATION" style={{ background: '#ffffff' }}>Oxide Thickness Oscillation (Rule 4)</option>
                     </>
                   )}
               </select>
@@ -546,7 +546,7 @@ export default function SpcPage() {
                 <p
                   className="text-xs font-semibold"
                   style={{
-                    color: scenario === 'NORMAL' ? '#86efac' : '#fca5a5',
+                    color: scenario === 'NORMAL' ? '#16a34a' : '#dc2626',
                   }}
                 >
                   {currentScenarioMeta.name}
@@ -557,7 +557,7 @@ export default function SpcPage() {
                 {scenario !== 'NORMAL' && highlightedKey && (
                   <p className="text-[10px] mt-1.5" style={{ color: '#64748b' }}>
                     Highlighted chart:{' '}
-                    <span style={{ color: '#f87171' }}>
+                    <span style={{ color: '#dc2626' }}>
                       {items.find((i) => i.key === highlightedKey)?.name ?? highlightedKey}
                     </span>
                   </p>
@@ -570,8 +570,8 @@ export default function SpcPage() {
           <div
             className="mt-4 rounded-xl p-3"
             style={{
-              background: 'rgba(255,255,255,0.02)',
-              border: '1px solid rgba(255,255,255,0.06)',
+              background: '#f8fafc',
+              border: '1px solid #e2e8f0',
             }}
           >
             <p
@@ -590,14 +590,14 @@ export default function SpcPage() {
                 <div
                   key={rule}
                   className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg"
-                  style={{ background: 'rgba(255,255,255,0.03)' }}
+                  style={{ background: '#f1f5f9' }}
                 >
                   <span
                     className="flex-shrink-0 w-4 h-4 flex items-center justify-center rounded-full text-[9px] font-bold"
                     style={{
                       background: 'rgba(99,102,241,0.2)',
-                      color: '#a5b4fc',
-                      border: '1px solid rgba(99,102,241,0.3)',
+                      color: '#4f46e5',
+                      border: '1px solid rgba(99,102,241,0.2)',
                     }}
                   >
                     {rule}

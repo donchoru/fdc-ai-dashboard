@@ -46,16 +46,16 @@ function CustomTooltip({ active, payload }: any) {
   return (
     <div
       style={{
-        background: 'rgba(15, 23, 42, 0.96)',
-        border: `1px solid ${p.isOoc ? 'rgba(239,68,68,0.4)' : 'rgba(255,255,255,0.1)'}`,
+        background: '#ffffff',
+        border: `1px solid ${p.isOoc ? 'rgba(239,68,68,0.4)' : '#e2e8f0'}`,
         borderRadius: '0.5rem',
         padding: '10px 14px',
-        boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
+        boxShadow: '0 4px 16px rgba(0,0,0,0.1)',
       }}
     >
-      <p style={{ color: '#94a3b8', fontSize: 11, marginBottom: 4 }}>Sample {p.label}</p>
+      <p style={{ color: '#64748b', fontSize: 11, marginBottom: 4 }}>Sample {p.label}</p>
       <p style={{
-        color: p.isOoc ? '#fca5a5' : '#a5b4fc',
+        color: p.isOoc ? '#dc2626' : '#4f46e5',
         fontSize: 14,
         fontWeight: 700,
       }}>
@@ -93,7 +93,7 @@ export default function SpcChart({
       {/* Header */}
       <div className="mb-3 flex items-start justify-between gap-2">
         <div>
-          <h3 className="text-sm font-semibold text-white/80">{data.name}</h3>
+          <h3 className="text-sm font-semibold text-slate-700">{data.name}</h3>
           <p className="text-xs mt-0.5" style={{ color: 'var(--muted)' }}>{data.description}</p>
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">
@@ -110,19 +110,19 @@ export default function SpcChart({
         <LineChart data={points} margin={{ top: 8, right: 12, left: 0, bottom: 0 }}>
           <CartesianGrid
             strokeDasharray="3 3"
-            stroke="rgba(255,255,255,0.05)"
+            stroke="#f1f5f9"
             vertical={false}
           />
 
           <XAxis
             dataKey="label"
-            tick={{ fill: '#64748b', fontSize: 10 }}
-            axisLine={{ stroke: 'rgba(255,255,255,0.08)' }}
+            tick={{ fill: '#94a3b8', fontSize: 10 }}
+            axisLine={{ stroke: '#e2e8f0' }}
             tickLine={false}
             interval="preserveStartEnd"
           />
           <YAxis
-            tick={{ fill: '#64748b', fontSize: 10 }}
+            tick={{ fill: '#94a3b8', fontSize: 10 }}
             axisLine={false}
             tickLine={false}
             width={56}
@@ -227,12 +227,12 @@ export default function SpcChart({
                   cy={cy}
                   r={isOoc ? 5 : 3}
                   fill={isOoc ? '#ef4444' : '#6366f1'}
-                  stroke={isOoc ? '#fca5a5' : 'rgba(255,255,255,0.2)'}
+                  stroke={isOoc ? '#fca5a5' : '#e0e7ff'}
                   strokeWidth={isOoc ? 2 : 1}
                 />
               );
             }}
-            activeDot={{ r: 5, fill: '#818cf8', stroke: 'rgba(255,255,255,0.3)', strokeWidth: 2 }}
+            activeDot={{ r: 5, fill: '#818cf8', stroke: '#ffffff', strokeWidth: 2 }}
             isAnimationActive={true}
             animationDuration={500}
             animationEasing="ease-out"
@@ -272,8 +272,8 @@ function StatPill({
     <div
       className="flex flex-col items-center px-2 py-1 rounded-lg"
       style={{
-        background: warn ? 'rgba(245,158,11,0.12)' : 'rgba(99,102,241,0.12)',
-        border: `1px solid ${warn ? 'rgba(245,158,11,0.25)' : 'rgba(99,102,241,0.25)'}`,
+        background: warn ? 'rgba(245,158,11,0.08)' : 'rgba(99,102,241,0.08)',
+        border: `1px solid ${warn ? 'rgba(245,158,11,0.2)' : 'rgba(99,102,241,0.2)'}`,
       }}
     >
       <span style={{ color: 'var(--muted)', fontSize: 9, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
@@ -281,7 +281,7 @@ function StatPill({
       </span>
       <span
         style={{
-          color: warn ? '#fcd34d' : '#a5b4fc',
+          color: warn ? '#d97706' : '#4f46e5',
           fontSize: 13,
           fontWeight: 700,
           lineHeight: 1.2,

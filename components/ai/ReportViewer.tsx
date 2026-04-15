@@ -28,7 +28,7 @@ function renderSection(content: string): React.ReactNode {
         {parts.map((part, i) => {
           if (part.startsWith('**') && part.endsWith('**')) {
             return (
-              <strong key={i} className="font-semibold text-white">
+              <strong key={i} className="font-semibold text-slate-900">
                 {part.slice(2, -2)}
               </strong>
             );
@@ -39,9 +39,9 @@ function renderSection(content: string): React.ReactNode {
                 key={i}
                 className="rounded px-1 py-0.5 text-xs font-mono"
                 style={{
-                  background: 'rgba(0,0,0,0.35)',
-                  color: '#a5f3fc',
-                  border: '1px solid rgba(255,255,255,0.08)',
+                  background: '#f1f5f9',
+                  color: '#0e7490',
+                  border: '1px solid #e2e8f0',
                 }}
               >
                 {part.slice(1, -1)}
@@ -66,9 +66,9 @@ function renderSection(content: string): React.ReactNode {
             key={`code-${codeBlockKey++}`}
             className="my-3 overflow-x-auto rounded-lg p-3 text-xs font-mono leading-relaxed"
             style={{
-              background: 'rgba(0,0,0,0.4)',
-              border: '1px solid rgba(255,255,255,0.08)',
-              color: '#a5f3fc',
+              background: '#f8fafc',
+              border: '1px solid #e2e8f0',
+              color: '#0e7490',
             }}
           >
             <code>{codeBlock.join('\n')}</code>
@@ -91,7 +91,7 @@ function renderSection(content: string): React.ReactNode {
         <h4
           key={idx}
           className="mb-1 mt-3 text-xs font-semibold uppercase tracking-widest"
-          style={{ color: '#94a3b8' }}
+          style={{ color: '#64748b' }}
         >
           {renderInline(line.slice(4), `h4-${idx}`)}
         </h4>
@@ -101,7 +101,7 @@ function renderSection(content: string): React.ReactNode {
     if (/^[•\-\*]\s/.test(line)) {
       const bulletText = line.slice(2).trim();
       nodes.push(
-        <div key={idx} className="flex items-start gap-2 py-0.5 text-sm leading-relaxed" style={{ color: '#cbd5e1' }}>
+        <div key={idx} className="flex items-start gap-2 py-0.5 text-sm leading-relaxed" style={{ color: '#475569' }}>
           <ChevronRight size={12} className="mt-[3px] flex-shrink-0" style={{ color: 'var(--accent)' }} />
           <span>{renderInline(bulletText, `li-${idx}`)}</span>
         </div>
@@ -112,10 +112,10 @@ function renderSection(content: string): React.ReactNode {
       const m = line.match(/^(\d+)\.\s(.*)$/);
       if (m) {
         nodes.push(
-          <div key={idx} className="flex items-start gap-2 py-0.5 text-sm leading-relaxed" style={{ color: '#cbd5e1' }}>
+          <div key={idx} className="flex items-start gap-2 py-0.5 text-sm leading-relaxed" style={{ color: '#475569' }}>
             <span
               className="flex h-4 w-4 flex-shrink-0 items-center justify-center rounded text-xs font-bold"
-              style={{ background: 'rgba(99,102,241,0.2)', color: 'var(--accent-light)', fontSize: '0.6rem' }}
+              style={{ background: 'rgba(99,102,241,0.1)', color: '#4f46e5', fontSize: '0.6rem' }}
             >
               {m[1]}
             </span>
@@ -126,7 +126,7 @@ function renderSection(content: string): React.ReactNode {
       }
     }
     if (/^-{3,}$/.test(line.trim())) {
-      nodes.push(<hr key={idx} className="my-4" style={{ borderColor: 'rgba(255,255,255,0.07)' }} />);
+      nodes.push(<hr key={idx} className="my-4" style={{ borderColor: '#e2e8f0' }} />);
       return;
     }
     if (line.trim() === '') {
@@ -134,7 +134,7 @@ function renderSection(content: string): React.ReactNode {
       return;
     }
     nodes.push(
-      <p key={idx} className="text-sm leading-relaxed" style={{ color: '#cbd5e1' }}>
+      <p key={idx} className="text-sm leading-relaxed" style={{ color: '#475569' }}>
         {renderInline(line, `p-${idx}`)}
       </p>
     );
@@ -146,22 +146,22 @@ function renderSection(content: string): React.ReactNode {
 function SectionHeading({ text }: { text: string }) {
   // Map known section names to accent colors
   const colorMap: Record<string, string> = {
-    '설비 상태': '#22c55e',
-    'Equipment Status': '#22c55e',
-    '이상 감지': '#ef4444',
-    'Active Anomalies': '#ef4444',
-    'SPC': '#f59e0b',
-    '권고 조치': '#6366f1',
-    'Recommended': '#6366f1',
-    'Actions': '#6366f1',
+    '설비 상태': '#16a34a',
+    'Equipment Status': '#16a34a',
+    '이상 감지': '#dc2626',
+    'Active Anomalies': '#dc2626',
+    'SPC': '#d97706',
+    '권고 조치': '#4f46e5',
+    'Recommended': '#4f46e5',
+    'Actions': '#4f46e5',
   };
 
-  const accentColor = Object.entries(colorMap).find(([k]) => text.includes(k))?.[1] ?? 'var(--accent-light)';
+  const accentColor = Object.entries(colorMap).find(([k]) => text.includes(k))?.[1] ?? '#4f46e5';
 
   return (
     <div
       className="mb-3 mt-6 flex items-center gap-3"
-      style={{ borderBottom: '1px solid rgba(255,255,255,0.06)', paddingBottom: '8px' }}
+      style={{ borderBottom: '1px solid #e2e8f0', paddingBottom: '8px' }}
     >
       <span
         className="h-4 w-0.5 flex-shrink-0 rounded-full"
@@ -180,8 +180,8 @@ function SectionHeading({ text }: { text: string }) {
 export default function ReportViewer({ report }: ReportViewerProps) {
   const typeLabel = report?.type === 'daily' ? '일별 리포트' : '교대 리포트';
   const typeColors = {
-    daily: { bg: 'rgba(99,102,241,0.12)', color: '#818cf8', border: 'rgba(99,102,241,0.25)' },
-    shift: { bg: 'rgba(34,197,94,0.10)', color: '#4ade80', border: 'rgba(34,197,94,0.25)' },
+    daily: { bg: 'rgba(99,102,241,0.08)', color: '#4f46e5', border: 'rgba(99,102,241,0.2)' },
+    shift: { bg: 'rgba(34,197,94,0.08)', color: '#16a34a', border: 'rgba(34,197,94,0.2)' },
   };
   const colors = report ? typeColors[report.type] : typeColors.shift;
 
@@ -197,10 +197,10 @@ export default function ReportViewer({ report }: ReportViewerProps) {
         >
           <FileText size={26} style={{ color: 'rgba(99,102,241,0.35)' }} />
         </div>
-        <p className="text-sm font-medium" style={{ color: '#475569' }}>
+        <p className="text-sm font-medium" style={{ color: '#64748b' }}>
           리포트 없음
         </p>
-        <p className="mt-1.5 max-w-xs text-xs leading-relaxed" style={{ color: '#334155' }}>
+        <p className="mt-1.5 max-w-xs text-xs leading-relaxed" style={{ color: '#94a3b8' }}>
           리포트가 생성되면 여기에 표시됩니다. AI 분석 패널에서 "생성" 버튼을 누르세요.
         </p>
       </div>
@@ -212,17 +212,17 @@ export default function ReportViewer({ report }: ReportViewerProps) {
       {/* ── Report header ── */}
       <div
         className="flex items-start justify-between px-5 py-4"
-        style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}
+        style={{ borderBottom: '1px solid #e2e8f0' }}
       >
         <div className="flex items-start gap-3">
           <div
             className="mt-0.5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl"
-            style={{ background: 'rgba(99,102,241,0.12)' }}
+            style={{ background: 'rgba(99,102,241,0.08)' }}
           >
             <FileText size={16} style={{ color: 'var(--accent-light)' }} />
           </div>
           <div>
-            <h2 className="text-sm font-semibold text-white">{report.title}</h2>
+            <h2 className="text-sm font-semibold text-slate-900">{report.title}</h2>
             <div className="mt-1.5 flex flex-wrap items-center gap-2">
               {/* Type badge */}
               <span
@@ -250,17 +250,17 @@ export default function ReportViewer({ report }: ReportViewerProps) {
           onClick={handlePrint}
           className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs transition-colors"
           style={{
-            background: 'rgba(255,255,255,0.05)',
-            border: '1px solid rgba(255,255,255,0.08)',
+            background: '#f1f5f9',
+            border: '1px solid #e2e8f0',
             color: '#64748b',
           }}
           onMouseEnter={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.color = '#94a3b8';
-            (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.08)';
+            (e.currentTarget as HTMLButtonElement).style.color = '#1e293b';
+            (e.currentTarget as HTMLButtonElement).style.background = '#e2e8f0';
           }}
           onMouseLeave={(e) => {
             (e.currentTarget as HTMLButtonElement).style.color = '#64748b';
-            (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.05)';
+            (e.currentTarget as HTMLButtonElement).style.background = '#f1f5f9';
           }}
           aria-label="리포트 인쇄"
         >

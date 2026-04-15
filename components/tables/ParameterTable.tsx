@@ -15,21 +15,21 @@ const STATUS_CONFIG: Record<
 > = {
   NORMAL: {
     label: 'NORMAL',
-    color: '#86efac',
-    bg: 'rgba(34,197,94,0.10)',
-    border: 'rgba(34,197,94,0.25)',
+    color: '#16a34a',
+    bg: 'rgba(34,197,94,0.08)',
+    border: 'rgba(34,197,94,0.2)',
   },
   WARNING: {
     label: 'WARN',
-    color: '#fcd34d',
-    bg: 'rgba(245,158,11,0.10)',
-    border: 'rgba(245,158,11,0.25)',
+    color: '#d97706',
+    bg: 'rgba(245,158,11,0.08)',
+    border: 'rgba(245,158,11,0.2)',
   },
   OOS: {
     label: 'OOS',
-    color: '#fca5a5',
-    bg: 'rgba(239,68,68,0.10)',
-    border: 'rgba(239,68,68,0.25)',
+    color: '#dc2626',
+    bg: 'rgba(239,68,68,0.08)',
+    border: 'rgba(239,68,68,0.2)',
   },
 };
 
@@ -54,7 +54,7 @@ function ValueCell({ value, ucl, lcl, status }: { value: number; ucl: number; lc
       {/* Mini bar */}
       <div
         className="relative h-1.5 rounded-full overflow-hidden"
-        style={{ background: 'rgba(255,255,255,0.06)', width: 80 }}
+        style={{ background: '#f1f5f9', width: 80 }}
         aria-hidden="true"
         title={`Value position: ${pct.toFixed(0)}% within spec range`}
       >
@@ -151,7 +151,7 @@ export default function ParameterTable({ parameters, onParameterClick }: Paramet
                   <div>
                     <span
                       className="text-xs font-semibold"
-                      style={{ color: isOos ? '#fca5a5' : isWarn ? '#fcd34d' : '#e2e8f0' }}
+                      style={{ color: isOos ? '#dc2626' : isWarn ? '#d97706' : '#1e293b' }}
                     >
                       {param.parameter}
                     </span>
@@ -170,7 +170,7 @@ export default function ParameterTable({ parameters, onParameterClick }: Paramet
                 <td className="px-3 py-2.5 max-w-[180px]">
                   <span
                     className="text-xs block truncate"
-                    style={{ color: '#94a3b8' }}
+                    style={{ color: '#64748b' }}
                     title={param.description}
                   >
                     {param.description}
@@ -197,7 +197,7 @@ export default function ParameterTable({ parameters, onParameterClick }: Paramet
 
                 {/* Spec */}
                 <td className="px-3 py-2.5 whitespace-nowrap">
-                  <span className="text-xs" style={{ color: '#94a3b8' }}>
+                  <span className="text-xs" style={{ color: '#64748b' }}>
                     {param.spec}
                   </span>
                   <span className="text-[10px] block" style={{ color: 'var(--muted)' }}>
@@ -207,21 +207,21 @@ export default function ParameterTable({ parameters, onParameterClick }: Paramet
 
                 {/* UCL */}
                 <td className="px-3 py-2.5 text-right whitespace-nowrap">
-                  <span className="text-xs" style={{ color: '#f87171' }}>
+                  <span className="text-xs" style={{ color: '#ef4444' }}>
                     {param.ucl.toFixed(4)}
                   </span>
                 </td>
 
                 {/* Target */}
                 <td className="px-3 py-2.5 text-right whitespace-nowrap">
-                  <span className="text-xs font-medium" style={{ color: '#86efac' }}>
+                  <span className="text-xs font-medium" style={{ color: '#16a34a' }}>
                     {param.target.toFixed(4)}
                   </span>
                 </td>
 
                 {/* LCL */}
                 <td className="px-3 py-2.5 text-right whitespace-nowrap">
-                  <span className="text-xs" style={{ color: '#f87171' }}>
+                  <span className="text-xs" style={{ color: '#ef4444' }}>
                     {param.lcl.toFixed(4)}
                   </span>
                 </td>

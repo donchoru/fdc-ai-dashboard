@@ -51,15 +51,15 @@ const SEVERITY_BUTTON_STYLES: Record<
     inactive: { color: '#64748b' },
   },
   CRITICAL: {
-    active: { bg: 'rgba(239,68,68,0.15)', color: '#fca5a5', border: 'rgba(239,68,68,0.35)' },
+    active: { bg: 'rgba(239,68,68,0.08)', color: '#dc2626', border: 'rgba(239,68,68,0.2)' },
     inactive: { color: '#64748b' },
   },
   WARNING: {
-    active: { bg: 'rgba(245,158,11,0.15)', color: '#fcd34d', border: 'rgba(245,158,11,0.35)' },
+    active: { bg: 'rgba(245,158,11,0.08)', color: '#d97706', border: 'rgba(245,158,11,0.2)' },
     inactive: { color: '#64748b' },
   },
   INFO: {
-    active: { bg: 'rgba(59,130,246,0.15)', color: '#93c5fd', border: 'rgba(59,130,246,0.35)' },
+    active: { bg: 'rgba(59,130,246,0.08)', color: '#2563eb', border: 'rgba(59,130,246,0.2)' },
     inactive: { color: '#64748b' },
   },
 };
@@ -85,14 +85,14 @@ function CorrelationChain({ chain }: { chain: EnrichedCorrelation }) {
     <div
       className="rounded-xl p-4 space-y-3 transition-colors duration-150"
       style={{
-        background: 'rgba(255,255,255,0.03)',
-        border: '1px solid rgba(255,255,255,0.07)',
+        background: '#f8fafc',
+        border: '1px solid #e2e8f0',
       }}
     >
       {/* Chain header */}
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="text-xs font-semibold text-white leading-tight">
+          <p className="text-xs font-semibold text-slate-900 leading-tight">
             {chain.name}
           </p>
           <p className="text-[11px] mt-0.5 leading-snug" style={{ color: '#94a3b8' }}>
@@ -120,8 +120,8 @@ function CorrelationChain({ chain }: { chain: EnrichedCorrelation }) {
       <div
         className="flex flex-wrap items-center gap-1.5 px-3 py-2.5 rounded-lg"
         style={{
-          background: 'rgba(255,255,255,0.02)',
-          border: '1px solid rgba(255,255,255,0.05)',
+          background: '#f1f5f9',
+          border: '1px solid #e2e8f0',
         }}
         aria-label={`Alarm sequence: ${chain.alarmSequence.join(' → ')}`}
       >
@@ -146,9 +146,9 @@ function CorrelationChain({ chain }: { chain: EnrichedCorrelation }) {
                 <code
                   className="text-[10px] px-1.5 py-0.5 rounded font-mono"
                   style={{
-                    background: 'rgba(255,255,255,0.05)',
-                    color: '#94a3b8',
-                    border: '1px solid rgba(255,255,255,0.08)',
+                    background: '#e2e8f0',
+                    color: '#64748b',
+                    border: '1px solid #cbd5e1',
                   }}
                 >
                   {id}
@@ -163,9 +163,9 @@ function CorrelationChain({ chain }: { chain: EnrichedCorrelation }) {
         <span
           className="font-medium px-2 py-0.5 rounded"
           style={{
-            color: '#94a3b8',
-            background: 'rgba(255,255,255,0.04)',
-            border: '1px solid rgba(255,255,255,0.07)',
+            color: '#64748b',
+            background: '#f1f5f9',
+            border: '1px solid #e2e8f0',
           }}
         >
           {chain.equipmentPattern}
@@ -182,9 +182,9 @@ function CorrelationChain({ chain }: { chain: EnrichedCorrelation }) {
         <span
           className="flex-shrink-0 w-4 h-4 flex items-center justify-center rounded-full transition-transform duration-150"
           style={{
-            background: 'rgba(245,158,11,0.12)',
-            color: '#fcd34d',
-            border: '1px solid rgba(245,158,11,0.25)',
+            background: 'rgba(245,158,11,0.08)',
+            color: '#d97706',
+            border: '1px solid rgba(245,158,11,0.2)',
             transform: expanded ? 'rotate(90deg)' : 'rotate(0deg)',
           }}
           aria-hidden="true"
@@ -193,7 +193,7 @@ function CorrelationChain({ chain }: { chain: EnrichedCorrelation }) {
         </span>
         <span
           className="font-medium"
-          style={{ color: '#fcd34d' }}
+          style={{ color: '#d97706' }}
         >
           Root Cause Hint
         </span>
@@ -203,9 +203,9 @@ function CorrelationChain({ chain }: { chain: EnrichedCorrelation }) {
           id={`root-cause-${chain.id}`}
           className="px-3 py-2.5 rounded-lg text-[11px] leading-relaxed"
           style={{
-            background: 'rgba(245,158,11,0.07)',
-            border: '1px solid rgba(245,158,11,0.15)',
-            color: '#fcd34d',
+            background: 'rgba(245,158,11,0.06)',
+            border: '1px solid rgba(245,158,11,0.2)',
+            color: '#92400e',
           }}
         >
           {chain.rootCauseHint}
@@ -227,7 +227,7 @@ function CorrelationPanel({
       <div className="flex items-center gap-2 mb-4">
         <span className="text-base" aria-hidden="true">🔗</span>
         <div>
-          <h2 className="text-sm font-semibold text-white">Alarm Correlations</h2>
+          <h2 className="text-sm font-semibold text-slate-900">Alarm Correlations</h2>
           <p className="text-[11px]" style={{ color: '#64748b' }}>
             Causal chains &amp; root cause hints
           </p>
@@ -253,7 +253,7 @@ function CorrelationPanel({
             <div
               key={i}
               className="rounded-xl h-28"
-              style={{ background: 'rgba(255,255,255,0.04)' }}
+              style={{ background: '#f1f5f9' }}
             />
           ))}
         </div>
@@ -290,17 +290,17 @@ function LoadingSkeleton() {
           <div
             key={i}
             className="rounded-2xl h-28"
-            style={{ background: 'rgba(255,255,255,0.04)' }}
+            style={{ background: '#f1f5f9' }}
           />
         ))}
       </div>
       <div
         className="rounded-2xl h-16"
-        style={{ background: 'rgba(255,255,255,0.04)' }}
+        style={{ background: '#f1f5f9' }}
       />
       <div
         className="rounded-2xl h-96"
-        style={{ background: 'rgba(255,255,255,0.04)' }}
+        style={{ background: '#f1f5f9' }}
       />
     </div>
   );
@@ -413,7 +413,7 @@ export default function AlarmsPage() {
       <header>
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <div>
-            <h1 className="text-2xl font-bold text-white leading-tight">
+            <h1 className="text-2xl font-bold text-slate-900 leading-tight">
               Equipment Alarms
             </h1>
             <p className="mt-1 text-sm" style={{ color: '#64748b' }}>
@@ -445,7 +445,7 @@ export default function AlarmsPage() {
                 className="status-dot down"
                 aria-hidden="true"
               />
-              <span className="text-sm font-semibold" style={{ color: '#fca5a5' }}>
+              <span className="text-sm font-semibold" style={{ color: '#dc2626' }}>
                 {activeCount} Active
               </span>
             </div>
@@ -495,16 +495,16 @@ export default function AlarmsPage() {
           role="alert"
         >
           <span className="text-lg" aria-hidden="true">⚠</span>
-          <p className="text-sm" style={{ color: '#fca5a5' }}>
+          <p className="text-sm" style={{ color: '#dc2626' }}>
             {error}
           </p>
           <button
             onClick={fetchAlarms}
             className="ml-auto text-xs px-3 py-1 rounded-lg"
             style={{
-              background: 'rgba(239,68,68,0.15)',
-              color: '#fca5a5',
-              border: '1px solid rgba(239,68,68,0.3)',
+              background: 'rgba(239,68,68,0.08)',
+              color: '#dc2626',
+              border: '1px solid rgba(239,68,68,0.2)',
             }}
           >
             Retry
@@ -528,8 +528,8 @@ export default function AlarmsPage() {
             <div
               className="flex items-center gap-0.5 rounded-xl p-1"
               style={{
-                background: 'rgba(255,255,255,0.03)',
-                border: '1px solid rgba(255,255,255,0.07)',
+                background: '#f8fafc',
+                border: '1px solid #e2e8f0',
               }}
               role="group"
               aria-label="Filter by severity"
@@ -552,9 +552,9 @@ export default function AlarmsPage() {
                     }}
                     onMouseEnter={(e) => {
                       if (!isActive) {
-                        (e.currentTarget as HTMLButtonElement).style.color = '#94a3b8';
+                        (e.currentTarget as HTMLButtonElement).style.color = '#475569';
                         (e.currentTarget as HTMLButtonElement).style.background =
-                          'rgba(255,255,255,0.04)';
+                          'rgba(0,0,0,0.03)';
                       }
                     }}
                     onMouseLeave={(e) => {
@@ -591,17 +591,17 @@ export default function AlarmsPage() {
                 id="equipment-filter"
                 value={equipmentFilter}
                 onChange={(e) => setEquipmentFilter(e.target.value)}
-                className="glass-input px-2.5 py-1.5 text-xs text-white appearance-none cursor-pointer"
+                className="glass-input px-2.5 py-1.5 text-xs text-slate-700 appearance-none cursor-pointer"
                 aria-label="Filter by equipment"
               >
-                <option value="ALL" style={{ background: '#0f172a' }}>
+                <option value="ALL" style={{ background: '#ffffff' }}>
                   All Equipment
                 </option>
                 {equipmentOptions.map(([id, name]) => (
                   <option
                     key={id}
                     value={id}
-                    style={{ background: '#0f172a' }}
+                    style={{ background: '#ffffff' }}
                   >
                     {name} ({id})
                   </option>
@@ -629,19 +629,19 @@ export default function AlarmsPage() {
                 <div
                   className="flex items-center justify-between px-4 py-3"
                   style={{
-                    borderBottom: '1px solid rgba(255,255,255,0.06)',
+                    borderBottom: '1px solid #e2e8f0',
                   }}
                 >
                   <div className="flex items-center gap-2">
-                    <span className="text-sm font-semibold text-white">
+                    <span className="text-sm font-semibold text-slate-900">
                       Alarm List
                     </span>
                     <span
                       className="text-[10px] px-2 py-0.5 rounded-full font-medium"
                       style={{
-                        background: 'rgba(255,255,255,0.06)',
-                        color: '#94a3b8',
-                        border: '1px solid rgba(255,255,255,0.1)',
+                        background: '#f1f5f9',
+                        color: '#64748b',
+                        border: '1px solid #e2e8f0',
                       }}
                     >
                       {filteredAlarms.length}
@@ -656,7 +656,7 @@ export default function AlarmsPage() {
                 {filteredAlarms.length === 0 ? (
                   <div className="py-16 flex flex-col items-center gap-3">
                     <span className="text-4xl" aria-hidden="true">🔔</span>
-                    <p className="text-sm font-medium" style={{ color: '#475569' }}>
+                    <p className="text-sm font-medium" style={{ color: '#64748b' }}>
                       No alarms match current filters
                     </p>
                     <button
@@ -667,9 +667,9 @@ export default function AlarmsPage() {
                       }}
                       className="text-xs px-3 py-1.5 rounded-lg transition-colors"
                       style={{
-                        background: 'rgba(99,102,241,0.12)',
-                        color: '#a5b4fc',
-                        border: '1px solid rgba(99,102,241,0.25)',
+                        background: 'rgba(99,102,241,0.08)',
+                        color: '#4f46e5',
+                        border: '1px solid rgba(99,102,241,0.2)',
                       }}
                     >
                       Clear filters
@@ -700,7 +700,7 @@ export default function AlarmsPage() {
                 <div className="flex items-center gap-2 mb-4">
                   <span className="text-base" aria-hidden="true">⏱</span>
                   <div>
-                    <h2 className="text-sm font-semibold text-white">
+                    <h2 className="text-sm font-semibold text-slate-900">
                       Recent Timeline
                     </h2>
                     <p className="text-[11px]" style={{ color: '#64748b' }}>

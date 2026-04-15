@@ -22,19 +22,19 @@ const SEVERITY_ORDER: Record<Severity, number> = {
 
 const STATUS_STYLES: Record<string, { color: string; bg: string; border: string }> = {
   ACTIVE: {
-    color: '#fca5a5',
-    bg: 'rgba(239,68,68,0.12)',
-    border: 'rgba(239,68,68,0.3)',
+    color: '#dc2626',
+    bg: 'rgba(239,68,68,0.08)',
+    border: 'rgba(239,68,68,0.2)',
   },
   ACKNOWLEDGED: {
-    color: '#fcd34d',
-    bg: 'rgba(245,158,11,0.12)',
-    border: 'rgba(245,158,11,0.3)',
+    color: '#d97706',
+    bg: 'rgba(245,158,11,0.08)',
+    border: 'rgba(245,158,11,0.2)',
   },
   CLEARED: {
-    color: '#86efac',
-    bg: 'rgba(34,197,94,0.12)',
-    border: 'rgba(34,197,94,0.3)',
+    color: '#16a34a',
+    bg: 'rgba(34,197,94,0.08)',
+    border: 'rgba(34,197,94,0.2)',
   },
 };
 
@@ -129,14 +129,14 @@ export default function AlarmTable({ alarms, onAcknowledge }: AlarmTableProps) {
 
             return (
               <tr key={alarm.id} style={rowStyle}>
-                <td className="px-3 py-2.5 whitespace-nowrap" style={{ color: '#94a3b8', fontSize: 11 }}>
+                <td className="px-3 py-2.5 whitespace-nowrap" style={{ color: '#64748b', fontSize: 11 }}>
                   {formatTimestamp(alarm.timestamp)}
                 </td>
                 <td className="px-3 py-2.5">
                   <SeverityBadge severity={alarm.severity} />
                 </td>
                 <td className="px-3 py-2.5 whitespace-nowrap">
-                  <span className="text-xs font-medium text-white/80">{alarm.equipmentName}</span>
+                  <span className="text-xs font-medium text-slate-800">{alarm.equipmentName}</span>
                   <br />
                   <span style={{ color: 'var(--muted)', fontSize: 10 }}>{alarm.lineId}</span>
                 </td>
@@ -144,8 +144,8 @@ export default function AlarmTable({ alarms, onAcknowledge }: AlarmTableProps) {
                   <code
                     className="text-[11px] px-1.5 py-0.5 rounded"
                     style={{
-                      background: 'rgba(255,255,255,0.06)',
-                      color: '#a5b4fc',
+                      background: '#f1f5f9',
+                      color: '#4f46e5',
                       fontFamily: 'monospace',
                     }}
                   >
@@ -153,14 +153,14 @@ export default function AlarmTable({ alarms, onAcknowledge }: AlarmTableProps) {
                   </code>
                 </td>
                 <td className="px-3 py-2.5">
-                  <span className="text-xs font-medium" style={{ color: '#e2e8f0' }}>
+                  <span className="text-xs font-medium" style={{ color: '#1e293b' }}>
                     {alarm.alarmName}
                   </span>
                 </td>
                 <td className="px-3 py-2.5 max-w-[220px]">
                   <span
                     className="text-xs block truncate"
-                    style={{ color: '#94a3b8' }}
+                    style={{ color: '#64748b' }}
                     title={alarm.description}
                   >
                     {alarm.description}
@@ -175,7 +175,7 @@ export default function AlarmTable({ alarms, onAcknowledge }: AlarmTableProps) {
                   {alarm.value !== null ? (
                     <span
                       className="text-xs font-semibold"
-                      style={{ color: alarm.severity === 'CRITICAL' ? '#fca5a5' : '#e2e8f0' }}
+                      style={{ color: alarm.severity === 'CRITICAL' ? '#dc2626' : '#1e293b' }}
                     >
                       {alarm.value}
                     </span>
@@ -210,15 +210,15 @@ export default function AlarmTable({ alarms, onAcknowledge }: AlarmTableProps) {
                         onClick={() => onAcknowledge(alarm.id)}
                         className="text-[11px] font-semibold px-2.5 py-1 rounded-md transition-all duration-150"
                         style={{
-                          background: 'rgba(99,102,241,0.15)',
-                          color: '#a5b4fc',
-                          border: '1px solid rgba(99,102,241,0.3)',
+                          background: 'rgba(99,102,241,0.08)',
+                          color: '#4f46e5',
+                          border: '1px solid rgba(99,102,241,0.2)',
                         }}
                         onMouseEnter={(e) => {
-                          (e.currentTarget as HTMLButtonElement).style.background = 'rgba(99,102,241,0.28)';
+                          (e.currentTarget as HTMLButtonElement).style.background = 'rgba(99,102,241,0.15)';
                         }}
                         onMouseLeave={(e) => {
-                          (e.currentTarget as HTMLButtonElement).style.background = 'rgba(99,102,241,0.15)';
+                          (e.currentTarget as HTMLButtonElement).style.background = 'rgba(99,102,241,0.08)';
                         }}
                         aria-label={`Acknowledge alarm ${alarm.alarmCode}`}
                       >
@@ -261,7 +261,7 @@ function SortableTh({
       >
         <span
           style={{
-            color: active ? '#a5b4fc' : '#94a3b8',
+            color: active ? '#4f46e5' : '#64748b',
             fontSize: 11,
             fontWeight: 500,
             textTransform: 'uppercase',
@@ -273,7 +273,7 @@ function SortableTh({
         <span
           aria-hidden="true"
           style={{
-            color: active ? '#818cf8' : 'rgba(255,255,255,0.2)',
+            color: active ? '#6366f1' : '#cbd5e1',
             fontSize: 10,
             lineHeight: 1,
           }}

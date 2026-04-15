@@ -36,8 +36,8 @@ export default function ProcessFilter({ selected, onChange }: ProcessFilterProps
     <div
       className="flex flex-wrap items-center gap-1 rounded-xl p-1"
       style={{
-        background: 'rgba(255,255,255,0.03)',
-        border: '1px solid rgba(255,255,255,0.07)',
+        background: '#f8fafc',
+        border: '1px solid #e2e8f0',
       }}
       role="tablist"
       aria-label="공정 필터"
@@ -54,14 +54,14 @@ export default function ProcessFilter({ selected, onChange }: ProcessFilterProps
             onClick={() => onChange(opt.value)}
             className="relative flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-all"
             style={{
-              background: isActive ? 'rgba(255,255,255,0.08)' : 'transparent',
-              color: isActive ? '#f1f5f9' : '#64748b',
-              boxShadow: isActive ? '0 1px 4px rgba(0,0,0,0.25)' : 'none',
+              background: isActive ? '#ffffff' : 'transparent',
+              color: isActive ? '#1e293b' : '#64748b',
+              boxShadow: isActive ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
             }}
             onMouseEnter={(e) => {
               if (!isActive) {
-                (e.currentTarget as HTMLButtonElement).style.color = '#94a3b8';
-                (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.04)';
+                (e.currentTarget as HTMLButtonElement).style.color = '#475569';
+                (e.currentTarget as HTMLButtonElement).style.background = 'rgba(0,0,0,0.03)';
               }
             }}
             onMouseLeave={(e) => {

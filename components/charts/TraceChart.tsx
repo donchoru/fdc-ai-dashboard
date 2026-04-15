@@ -36,21 +36,21 @@ function CustomTooltip(props: any) {
   return (
     <div
       style={{
-        background: 'rgba(15, 23, 42, 0.96)',
-        border: `1px solid ${isOos ? 'rgba(239,68,68,0.4)' : 'rgba(255,255,255,0.1)'}`,
+        background: '#ffffff',
+        border: `1px solid ${isOos ? 'rgba(239,68,68,0.4)' : '#e2e8f0'}`,
         borderRadius: '0.5rem',
         padding: '10px 14px',
-        boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
+        boxShadow: '0 4px 16px rgba(0,0,0,0.1)',
         minWidth: 160,
       }}
     >
-      <p style={{ color: '#94a3b8', fontSize: 11, marginBottom: 6 }}>{label}</p>
+      <p style={{ color: '#64748b', fontSize: 11, marginBottom: 6 }}>{label}</p>
       {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
       {payload.map((entry: any, i: number) => (
         <p
           key={i}
           style={{
-            color: isOos ? '#fca5a5' : '#a5b4fc',
+            color: isOos ? '#dc2626' : '#4f46e5',
             fontSize: 13,
             fontWeight: 600,
           }}
@@ -59,7 +59,7 @@ function CustomTooltip(props: any) {
         </p>
       ))}
       {point && (
-        <div style={{ marginTop: 6, borderTop: '1px solid rgba(255,255,255,0.07)', paddingTop: 6 }}>
+        <div style={{ marginTop: 6, borderTop: '1px solid #f1f5f9', paddingTop: 6 }}>
           <Row label="UCL" value={point.ucl} color="#ef444499" />
           <Row label="Target" value={point.target} color="#22c55e99" />
           <Row label="LCL" value={point.lcl} color="#ef444499" />
@@ -105,11 +105,11 @@ export default function TraceChart({
     <div className="w-full">
       {title && (
         <div className="mb-3 flex items-center justify-between">
-          <h3 className="text-sm font-semibold text-white/80">{title}</h3>
+          <h3 className="text-sm font-semibold text-slate-700">{title}</h3>
           <span
             className="text-xs px-2 py-0.5 rounded-full"
             style={{
-              background: 'rgba(255,255,255,0.06)',
+              background: '#f1f5f9',
               color: 'var(--muted)',
             }}
           >
@@ -132,19 +132,19 @@ export default function TraceChart({
 
           <CartesianGrid
             strokeDasharray="3 3"
-            stroke="rgba(255,255,255,0.05)"
+            stroke="#f1f5f9"
             vertical={false}
           />
 
           <XAxis
             dataKey="time"
-            tick={{ fill: '#64748b', fontSize: 10 }}
-            axisLine={{ stroke: 'rgba(255,255,255,0.08)' }}
+            tick={{ fill: '#94a3b8', fontSize: 10 }}
+            axisLine={{ stroke: '#e2e8f0' }}
             tickLine={false}
             interval="preserveStartEnd"
           />
           <YAxis
-            tick={{ fill: '#64748b', fontSize: 10 }}
+            tick={{ fill: '#94a3b8', fontSize: 10 }}
             axisLine={false}
             tickLine={false}
             width={52}
@@ -186,7 +186,7 @@ export default function TraceChart({
             strokeWidth={2}
             fill={`url(#${gradientId})`}
             dot={false}
-            activeDot={{ r: 4, fill: areaStroke, stroke: 'rgba(255,255,255,0.3)', strokeWidth: 2 }}
+            activeDot={{ r: 4, fill: areaStroke, stroke: '#ffffff', strokeWidth: 2 }}
             isAnimationActive={true}
             animationDuration={500}
             animationEasing="ease-out"

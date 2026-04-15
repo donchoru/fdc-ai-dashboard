@@ -35,7 +35,7 @@ function Skeleton({ className = '' }: { className?: string }) {
   return (
     <div
       className={`rounded-lg animate-pulse ${className}`}
-      style={{ background: 'rgba(255,255,255,0.06)' }}
+      style={{ background: '#f1f5f9' }}
       aria-hidden="true"
     />
   );
@@ -45,7 +45,7 @@ function ChartSkeleton({ height = 220 }: { height?: number }) {
   return (
     <div
       className="rounded-lg animate-pulse w-full"
-      style={{ height, background: 'rgba(255,255,255,0.06)' }}
+      style={{ height, background: '#f1f5f9' }}
       aria-hidden="true"
     />
   );
@@ -91,7 +91,7 @@ function SectionHeader({
       />
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
-          <h2 className="text-sm font-semibold text-white">{title}</h2>
+          <h2 className="text-sm font-semibold text-slate-900">{title}</h2>
           {count !== undefined && (
             <span
               className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full"
@@ -129,8 +129,8 @@ function MetaPill({
     <div
       className="flex flex-col px-3 py-2 rounded-lg"
       style={{
-        background: 'rgba(255,255,255,0.04)',
-        border: '1px solid rgba(255,255,255,0.08)',
+        background: '#f8fafc',
+        border: '1px solid #e2e8f0',
       }}
     >
       <span
@@ -141,7 +141,7 @@ function MetaPill({
       </span>
       <span
         className="text-sm font-semibold mt-0.5"
-        style={{ color: valueColor ?? '#e2e8f0' }}
+        style={{ color: valueColor ?? '#1e293b' }}
       >
         {value}
       </span>
@@ -178,7 +178,7 @@ function TraceCardWrapper({
             <span
               className="text-sm font-semibold truncate"
               style={{
-                color: isOos ? '#fca5a5' : isWarn ? '#fcd34d' : '#e2e8f0',
+                color: isOos ? '#dc2626' : isWarn ? '#d97706' : '#1e293b',
               }}
             >
               {parameter.parameter}
@@ -188,20 +188,20 @@ function TraceCardWrapper({
               style={
                 isOos
                   ? {
-                      background: 'rgba(239,68,68,0.12)',
-                      color: '#fca5a5',
-                      border: '1px solid rgba(239,68,68,0.25)',
+                      background: 'rgba(239,68,68,0.08)',
+                      color: '#dc2626',
+                      border: '1px solid rgba(239,68,68,0.2)',
                     }
                   : isWarn
                   ? {
-                      background: 'rgba(245,158,11,0.12)',
-                      color: '#fcd34d',
-                      border: '1px solid rgba(245,158,11,0.25)',
+                      background: 'rgba(245,158,11,0.08)',
+                      color: '#d97706',
+                      border: '1px solid rgba(245,158,11,0.2)',
                     }
                   : {
-                      background: 'rgba(34,197,94,0.10)',
-                      color: '#86efac',
-                      border: '1px solid rgba(34,197,94,0.22)',
+                      background: 'rgba(34,197,94,0.08)',
+                      color: '#16a34a',
+                      border: '1px solid rgba(34,197,94,0.2)',
                     }
               }
             >
@@ -220,7 +220,7 @@ function TraceCardWrapper({
           <span
             className="text-base font-bold leading-none"
             style={{
-              color: isOos ? '#fca5a5' : isWarn ? '#fcd34d' : '#22c55e',
+              color: isOos ? '#dc2626' : isWarn ? '#d97706' : '#16a34a',
             }}
           >
             {parameter.value}
@@ -234,19 +234,19 @@ function TraceCardWrapper({
       {/* Spec info strip */}
       <div
         className="flex items-center gap-4 mb-3 px-2 py-1.5 rounded-lg text-[11px]"
-        style={{ background: 'rgba(255,255,255,0.03)' }}
+        style={{ background: '#f8fafc', border: '1px solid #f1f5f9' }}
       >
         <span style={{ color: '#64748b' }}>
-          Spec: <span style={{ color: '#94a3b8' }}>{parameter.spec}</span>
+          Spec: <span style={{ color: '#475569' }}>{parameter.spec}</span>
         </span>
         <span style={{ color: '#64748b' }}>
-          UCL: <span style={{ color: '#f87171' }}>{parameter.ucl}</span>
+          UCL: <span style={{ color: '#ef4444' }}>{parameter.ucl}</span>
         </span>
         <span style={{ color: '#64748b' }}>
-          TGT: <span style={{ color: '#86efac' }}>{parameter.target}</span>
+          TGT: <span style={{ color: '#16a34a' }}>{parameter.target}</span>
         </span>
         <span style={{ color: '#64748b' }}>
-          LCL: <span style={{ color: '#f87171' }}>{parameter.lcl}</span>
+          LCL: <span style={{ color: '#ef4444' }}>{parameter.lcl}</span>
         </span>
       </div>
 
@@ -490,17 +490,17 @@ function EquipmentDetailContent({
           </svg>
         </div>
         <div className="text-center">
-          <p className="text-white font-semibold text-lg">Equipment Not Found</p>
+          <p className="text-slate-900 font-semibold text-lg">Equipment Not Found</p>
           <p className="text-sm mt-1" style={{ color: 'var(--muted)' }}>
-            Equipment ID <code className="text-red-400">{equipmentId}</code> does not exist
+            Equipment ID <code className="text-red-600">{equipmentId}</code> does not exist
           </p>
         </div>
         <button
           onClick={() => router.push('/dashboard')}
           className="px-4 py-2 rounded-lg text-sm font-medium text-white transition-colors"
           style={{
-            background: 'rgba(99,102,241,0.2)',
-            border: '1px solid rgba(99,102,241,0.35)',
+            background: 'linear-gradient(135deg, #6366f1, #4f46e5)',
+            border: '1px solid rgba(99,102,241,0.3)',
           }}
         >
           Back to Dashboard
@@ -524,7 +524,7 @@ function EquipmentDetailContent({
             className="flex items-center gap-1.5 text-xs mb-4 transition-colors"
             style={{ color: '#64748b' }}
             onMouseEnter={(e) =>
-              ((e.currentTarget as HTMLButtonElement).style.color = '#e2e8f0')
+              ((e.currentTarget as HTMLButtonElement).style.color = '#1e293b')
             }
             onMouseLeave={(e) =>
               ((e.currentTarget as HTMLButtonElement).style.color = '#64748b')
@@ -552,15 +552,15 @@ function EquipmentDetailContent({
             {/* Left: name + meta */}
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-3 flex-wrap mb-2">
-                <h1 className="text-xl font-bold text-white">{equipment.name}</h1>
+                <h1 className="text-xl font-bold text-slate-900">{equipment.name}</h1>
                 <StatusBadge status={equipment.status} />
                 <ProcessBadge process={equipment.process} full />
               </div>
-              <p className="text-sm mb-1" style={{ color: '#94a3b8' }}>
+              <p className="text-sm mb-1" style={{ color: '#64748b' }}>
                 {equipment.model}
                 <span
                   className="mx-2"
-                  style={{ color: 'rgba(255,255,255,0.15)' }}
+                  style={{ color: '#cbd5e1' }}
                 >
                   ·
                 </span>
@@ -634,21 +634,21 @@ function EquipmentDetailContent({
               valueColor={
                 equipment.waferCount > 4000
                   ? '#f59e0b'
-                  : '#e2e8f0'
+                  : '#475569'
               }
             />
             <MetaPill
               label="Active Alarms"
               value={activeAlarms.length}
               valueColor={
-                activeAlarms.length > 0 ? '#fca5a5' : '#86efac'
+                activeAlarms.length > 0 ? '#dc2626' : '#16a34a'
               }
             />
             <MetaPill
               label="OOS Params"
               value={oosParameters.length}
               valueColor={
-                oosParameters.length > 0 ? '#fca5a5' : '#86efac'
+                oosParameters.length > 0 ? '#dc2626' : '#16a34a'
               }
             />
           </div>
@@ -657,12 +657,12 @@ function EquipmentDetailContent({
           <div
             className="mt-4 px-3 py-2.5 rounded-lg text-xs"
             style={{
-              background: 'rgba(255,255,255,0.03)',
-              border: '1px solid rgba(255,255,255,0.06)',
+              background: '#f8fafc',
+              border: '1px solid #f1f5f9',
             }}
           >
             <span style={{ color: '#64748b' }}>Process:</span>{' '}
-            <span style={{ color: '#94a3b8' }}>
+            <span style={{ color: '#475569' }}>
               {PROCESS_LABELS[equipment.process] ?? equipment.process}
             </span>
           </div>
@@ -721,7 +721,7 @@ function EquipmentDetailContent({
                     height="13"
                     viewBox="0 0 24 24"
                     fill="none"
-                    stroke="#fca5a5"
+                    stroke="#dc2626"
                     strokeWidth="2.5"
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -731,7 +731,7 @@ function EquipmentDetailContent({
                     <line x1="12" y1="9" x2="12" y2="13" />
                     <line x1="12" y1="17" x2="12.01" y2="17" />
                   </svg>
-                  <span style={{ color: '#fca5a5' }}>
+                  <span style={{ color: '#dc2626' }}>
                     {oosParameters.length} OOS
                     {warningParameters.length > 0 &&
                       ` · ${warningParameters.length} WARNING`}{' '}
@@ -872,7 +872,7 @@ export default function EquipmentDetailPage({
           >
             <div
               className="rounded-lg animate-pulse w-full h-full"
-              style={{ background: 'rgba(255,255,255,0.06)' }}
+              style={{ background: '#f1f5f9' }}
               aria-hidden="true"
             />
           </div>

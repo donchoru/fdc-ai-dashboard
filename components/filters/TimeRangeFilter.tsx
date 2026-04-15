@@ -29,8 +29,8 @@ export default function TimeRangeFilter({ selected, onChange }: TimeRangeFilterP
       <div
         className="flex items-center rounded-lg p-0.5"
         style={{
-          background: 'rgba(255,255,255,0.04)',
-          border: '1px solid rgba(255,255,255,0.08)',
+          background: '#f1f5f9',
+          border: '1px solid #e2e8f0',
         }}
         role="group"
         aria-label="시간 범위 선택"
@@ -46,18 +46,18 @@ export default function TimeRangeFilter({ selected, onChange }: TimeRangeFilterP
               className="rounded-md px-3 py-1 text-xs font-medium transition-all"
               style={{
                 background: isActive
-                  ? 'linear-gradient(135deg, rgba(99,102,241,0.3), rgba(79,70,229,0.25))'
+                  ? '#ffffff'
                   : 'transparent',
-                color: isActive ? '#c7d2fe' : '#64748b',
+                color: isActive ? '#4f46e5' : '#64748b',
                 border: isActive
-                  ? '1px solid rgba(99,102,241,0.3)'
+                  ? '1px solid rgba(99,102,241,0.2)'
                   : '1px solid transparent',
-                boxShadow: isActive ? '0 1px 6px rgba(99,102,241,0.2)' : 'none',
+                boxShadow: isActive ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
               }}
               onMouseEnter={(e) => {
                 if (!isActive) {
-                  (e.currentTarget as HTMLButtonElement).style.color = '#94a3b8';
-                  (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.05)';
+                  (e.currentTarget as HTMLButtonElement).style.color = '#475569';
+                  (e.currentTarget as HTMLButtonElement).style.background = 'rgba(0,0,0,0.03)';
                 }
               }}
               onMouseLeave={(e) => {

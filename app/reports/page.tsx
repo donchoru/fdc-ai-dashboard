@@ -67,13 +67,13 @@ function ConfigWarning() {
       <AlertCircle
         size={16}
         className="mt-0.5 flex-shrink-0"
-        style={{ color: '#fcd34d' }}
+        style={{ color: '#d97706' }}
       />
       <div>
-        <p className="text-sm font-medium" style={{ color: '#fcd34d' }}>
+        <p className="text-sm font-medium" style={{ color: '#92400e' }}>
           LLM API 키가 설정되지 않았습니다
         </p>
-        <p className="mt-1 text-xs leading-relaxed" style={{ color: '#92400e' }}>
+        <p className="mt-1 text-xs leading-relaxed" style={{ color: '#78350f' }}>
           AI 리포트 기능을 사용하려면 Settings 페이지에서 API 키를 설정하세요.
         </p>
         <a
@@ -145,11 +145,11 @@ function ReportTypeCard({
       className="relative flex flex-col overflow-hidden rounded-2xl p-5 transition-all duration-300"
       style={{
         background: isActive
-          ? `rgba(255,255,255,0.05)`
-          : 'rgba(255,255,255,0.02)',
+          ? '#ffffff'
+          : '#f8fafc',
         border: isActive
           ? `1px solid ${config.accentBorder}`
-          : '1px solid rgba(255,255,255,0.07)',
+          : '1px solid #e2e8f0',
         boxShadow: isActive ? `0 0 24px ${config.glowColor}` : 'none',
       }}
     >
@@ -182,7 +182,7 @@ function ReportTypeCard({
       </div>
 
       {/* Title */}
-      <h2 className="text-base font-semibold text-white">{config.title}</h2>
+      <h2 className="text-base font-semibold text-slate-900">{config.title}</h2>
       <p className="text-xs" style={{ color: '#64748b' }}>
         {config.subtitle}
       </p>
@@ -202,7 +202,7 @@ function ReportTypeCard({
         className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-medium text-white transition-all duration-200"
         style={{
           background: isStreaming
-            ? 'rgba(255,255,255,0.06)'
+            ? '#f1f5f9'
             : config.btnGradient,
           boxShadow: isStreaming ? 'none' : config.btnShadow,
           cursor: isStreaming ? 'not-allowed' : 'pointer',
@@ -238,8 +238,8 @@ interface HistoryItemProps {
 
 function HistoryItem({ entry, isSelected, onClick }: HistoryItemProps) {
   const typeConfig = {
-    shift: { label: '교대', color: '#4ade80', bg: 'rgba(34,197,94,0.1)', border: 'rgba(34,197,94,0.2)' },
-    daily: { label: '일별', color: '#818cf8', bg: 'rgba(99,102,241,0.1)', border: 'rgba(99,102,241,0.2)' },
+    shift: { label: '교대', color: '#16a34a', bg: 'rgba(34,197,94,0.08)', border: 'rgba(34,197,94,0.2)' },
+    daily: { label: '일별', color: '#4f46e5', bg: 'rgba(99,102,241,0.08)', border: 'rgba(99,102,241,0.2)' },
   };
   const cfg = typeConfig[entry.type];
 
@@ -249,8 +249,8 @@ function HistoryItem({ entry, isSelected, onClick }: HistoryItemProps) {
       className="flex w-full items-start gap-3 rounded-xl px-3 py-2.5 text-left transition-all duration-150"
       style={{
         background: isSelected
-          ? 'rgba(99,102,241,0.1)'
-          : 'rgba(255,255,255,0.02)',
+          ? 'rgba(99,102,241,0.08)'
+          : '#f8fafc',
         border: isSelected
           ? '1px solid rgba(99,102,241,0.2)'
           : '1px solid transparent',
@@ -258,12 +258,12 @@ function HistoryItem({ entry, isSelected, onClick }: HistoryItemProps) {
       onMouseEnter={(e) => {
         if (!isSelected)
           (e.currentTarget as HTMLButtonElement).style.background =
-            'rgba(255,255,255,0.04)';
+            '#f1f5f9';
       }}
       onMouseLeave={(e) => {
         if (!isSelected)
           (e.currentTarget as HTMLButtonElement).style.background =
-            'rgba(255,255,255,0.02)';
+            '#f8fafc';
       }}
       aria-pressed={isSelected}
     >
@@ -274,7 +274,7 @@ function HistoryItem({ entry, isSelected, onClick }: HistoryItemProps) {
         <FileText size={11} style={{ color: cfg.color }} />
       </div>
       <div className="min-w-0 flex-1">
-        <p className="truncate text-xs font-medium text-white">{entry.title}</p>
+        <p className="truncate text-xs font-medium text-slate-800">{entry.title}</p>
         <div className="mt-0.5 flex items-center gap-1.5">
           <span
             className="inline-block rounded px-1.5 py-0 text-[10px] font-medium"
@@ -463,7 +463,7 @@ export default function ReportsPage() {
               <Zap size={20} style={{ color: 'var(--accent-light)' }} />
             </div>
             <div>
-              <h1 className="text-2xl font-bold tracking-tight text-white">
+              <h1 className="text-2xl font-bold tracking-tight text-slate-900">
                 AI Reports
               </h1>
               <p className="mt-1 text-sm leading-relaxed" style={{ color: '#64748b' }}>
@@ -547,8 +547,8 @@ export default function ReportsPage() {
               <div
                 className="flex flex-col items-center justify-center rounded-2xl py-16 text-center"
                 style={{
-                  background: 'rgba(255,255,255,0.01)',
-                  border: '1px dashed rgba(255,255,255,0.07)',
+                  background: '#f8fafc',
+                  border: '1px dashed #e2e8f0',
                 }}
               >
                 <div
@@ -581,7 +581,7 @@ export default function ReportsPage() {
             <div className="glass-card p-4">
               <div
                 className="mb-3 flex items-center gap-2 pb-3"
-                style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}
+                style={{ borderBottom: '1px solid #e2e8f0' }}
               >
                 <div
                   className="flex h-6 w-6 items-center justify-center rounded-lg"
@@ -589,7 +589,7 @@ export default function ReportsPage() {
                 >
                   <History size={12} style={{ color: 'var(--accent-light)' }} />
                 </div>
-                <h3 className="text-xs font-semibold text-white">
+                <h3 className="text-xs font-semibold text-slate-900">
                   생성 기록
                 </h3>
                 {history.length > 0 && (
@@ -610,7 +610,7 @@ export default function ReportsPage() {
                   <History
                     size={22}
                     className="mx-auto mb-2"
-                    style={{ color: 'rgba(255,255,255,0.08)' }}
+                    style={{ color: '#cbd5e1' }}
                   />
                   <p className="text-xs" style={{ color: '#1e293b' }}>
                     아직 생성된 리포트가 없습니다

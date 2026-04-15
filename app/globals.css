@@ -1,12 +1,12 @@
 @import "tailwindcss";
 
 :root {
-  --background: #020617;
-  --foreground: #e2e8f0;
-  --card-bg: rgba(255, 255, 255, 0.03);
-  --card-border: rgba(255, 255, 255, 0.08);
-  --card-bg-solid: rgba(255, 255, 255, 0.06);
-  --card-border-solid: rgba(255, 255, 255, 0.12);
+  --background: #f8fafc;
+  --foreground: #1e293b;
+  --card-bg: #ffffff;
+  --card-border: #e2e8f0;
+  --card-bg-solid: #ffffff;
+  --card-border-solid: #e2e8f0;
   --accent: #6366f1;
   --accent-light: #818cf8;
   --critical: #ef4444;
@@ -23,36 +23,34 @@ body {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
-/* Glass Morphism Cards */
+/* Light Cards */
 .glass-card {
   background: var(--card-bg);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
   border: 1px solid var(--card-border);
   border-radius: 1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .glass-card-solid {
   background: var(--card-bg-solid);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--card-border-solid);
   border-radius: 1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
 .glass-input {
-  background: rgba(255, 255, 255, 0.06);
-  backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
   border-radius: 0.5rem;
   color: var(--foreground);
   transition: all 0.2s ease;
 }
 
 .glass-input:focus {
-  border-color: rgba(99, 102, 241, 0.5);
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
   outline: none;
+  background: #ffffff;
 }
 
 /* Status Indicators */
@@ -87,31 +85,31 @@ body {
   50% { opacity: 0.5; }
 }
 
-/* Hover glow effect */
+/* Hover lift effect */
 .hover-glow {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .hover-glow:hover {
   transform: translateY(-2px);
-  box-shadow: 0 0 20px rgba(99, 102, 241, 0.12), 0 8px 30px rgba(0, 0, 0, 0.3);
-  border-color: rgba(99, 102, 241, 0.25);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border-color: #c7d2fe;
 }
 
-/* Severity badges */
+/* Severity badges — light mode */
 .severity-critical {
-  background: rgba(239, 68, 68, 0.15);
-  color: #fca5a5;
-  border: 1px solid rgba(239, 68, 68, 0.3);
+  background: rgba(239, 68, 68, 0.08);
+  color: #dc2626;
+  border: 1px solid rgba(239, 68, 68, 0.2);
 }
 .severity-warning {
-  background: rgba(245, 158, 11, 0.15);
-  color: #fcd34d;
-  border: 1px solid rgba(245, 158, 11, 0.3);
+  background: rgba(245, 158, 11, 0.08);
+  color: #d97706;
+  border: 1px solid rgba(245, 158, 11, 0.2);
 }
 .severity-info {
-  background: rgba(59, 130, 246, 0.15);
-  color: #93c5fd;
-  border: 1px solid rgba(59, 130, 246, 0.3);
+  background: rgba(59, 130, 246, 0.08);
+  color: #2563eb;
+  border: 1px solid rgba(59, 130, 246, 0.2);
 }
 
 /* Scrollbar */
@@ -122,35 +120,36 @@ body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
+  background: #cbd5e1;
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: #94a3b8;
 }
 
 /* Chart tooltip */
 .recharts-tooltip-wrapper .recharts-default-tooltip {
-  background: rgba(15, 23, 42, 0.95) !important;
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
   border-radius: 0.5rem !important;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1) !important;
+  color: #1e293b !important;
 }
 
 /* Table styles */
 .data-table th {
-  background: rgba(255, 255, 255, 0.03);
-  font-weight: 500;
-  color: #94a3b8;
+  background: #f8fafc;
+  font-weight: 600;
+  color: #64748b;
   text-transform: uppercase;
   font-size: 0.7rem;
   letter-spacing: 0.05em;
 }
 .data-table td {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid #f1f5f9;
 }
 .data-table tr:hover td {
-  background: rgba(255, 255, 255, 0.02);
+  background: #f8fafc;
 }
 
 /* AI streaming text animation */

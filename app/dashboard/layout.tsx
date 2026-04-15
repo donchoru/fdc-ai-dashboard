@@ -91,8 +91,107 @@ const BREADCRUMB_MAP: Record<string, string[]> = {
   '/chat': ['FDC AI', 'Ask AI'],
 };
 
+/* ─── Provider Presets ────────────────────────────────────────────────── */
+const PROVIDER_PRESETS: Record<string, { baseUrl: string; model: string; placeholder: string }> = {
+  gemini: {
+    baseUrl: 'https://generativelanguage.googleapis.com/v1beta/openai',
+    model: 'gemini-2.0-flash',
+    placeholder: 'AIza...',
+  },
+  openai: {
+    baseUrl: 'https://api.openai.com/v1',
+    model: 'gpt-4o',
+    placeholder: 'sk-...',
+  },
+  anthropic: {
+    baseUrl: 'https://api.anthropic.com/v1',
+    model: 'claude-sonnet-4-20250514',
+    placeholder: 'sk-ant-...',
+  },
+  ollama: {
+    baseUrl: 'http://localhost:11434/v1',
+    model: 'qwen2.5:14b',
+    placeholder: '(불필요)',
+  },
+  custom: {
+    baseUrl: '',
+    model: '',
+    placeholder: 'API Key',
+  },
+};
+
 /* ─── Settings Panel ─────────────────────────────────────────────────── */
 function SettingsPanel({ onClose }: { onClose: () => void }) {
+  const [provider, setProvider] = useState('gemini');
+  const [baseUrl, setBaseUrl] = useState('');
+  const [apiKey, setApiKey] = useState('');
+  const [model, setModel] = useState('');
+  const [temperature, setTemperature] = useState(0.3);
+  const [maxTokens, setMaxTokens] = useState(4096);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [status, setStatus] = useState<{ type: 'success' | 'error'; msg: string } | null>(null);
+  const [configured, setConfigured] = useState(false);
+
+  // Load current config on mount
+  useEffect(() => {
+    fetch('/api/config')
+      .then((r) => r.json())
+      .then((data) => {
+        setBaseUrl(data.baseUrl || '');
+        setModel(data.model || '');
+        setTemperature(data.temperature ?? 0.3);
+        setMaxTokens(data.maxTokens ?? 4096);
+        setConfigured(data.configured ?? false);
+        // Detect provider from baseUrl
+        if (data.baseUrl?.includes('googleapis.com')) setProvider('gemini');
+        else if (data.baseUrl?.includes('openai.com')) setProvider('openai');
+        else if (data.baseUrl?.includes('anthropic.com')) setProvider('anthropic');
+        else if (data.baseUrl?.includes('localhost:11434')) setProvider('ollama');
+        else setProvider('custom');
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
+
+  // When provider changes, update baseUrl/model presets
+  const handleProviderChange = (p: string) => {
+    setProvider(p);
+    const preset = PROVIDER_PRESETS[p];
+    if (preset && p !== 'custom') {
+      setBaseUrl(preset.baseUrl);
+      setModel(preset.model);
+    }
+  };
+
+  const handleSave = async () => {
+    setSaving(true);
+    setStatus(null);
+    try {
+      const body: Record<string, unknown> = { baseUrl, model, temperature, maxTokens };
+      if (apiKey) body.apiKey = apiKey; // only send if user typed a new key
+      const res = await fetch('/api/config', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || 'Failed to save');
+      }
+      const data = await res.json();
+      setConfigured(data.config?.configured ?? false);
+      setStatus({ type: 'success', msg: '설정이 저장되었습니다' });
+      setTimeout(() => onClose(), 1200);
+    } catch (e: unknown) {
+      setStatus({ type: 'error', msg: e instanceof Error ? e.message : 'Save failed' });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const preset = PROVIDER_PRESETS[provider] || PROVIDER_PRESETS.custom;
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-end sm:items-center justify-center"
@@ -102,20 +201,20 @@ function SettingsPanel({ onClose }: { onClose: () => void }) {
     >
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+        className="absolute inset-0 bg-black/20 backdrop-blur-sm"
         onClick={onClose}
         aria-hidden="true"
       />
       {/* Panel */}
-      <div className="glass-card-solid relative z-10 w-full max-w-md mx-4 p-6 shadow-2xl shadow-black/40">
+      <div className="glass-card-solid relative z-10 w-full max-w-md mx-4 p-6 shadow-xl shadow-black/10">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h2 className="text-white font-semibold text-lg">Settings</h2>
-            <p className="text-[#64748b] text-sm mt-0.5">LLM provider & model configuration</p>
+            <h2 className="text-slate-900 font-semibold text-lg">Settings</h2>
+            <p className="text-slate-500 text-sm mt-0.5">LLM provider & model configuration</p>
           </div>
           <button
             onClick={onClose}
-            className="p-2 rounded-lg text-[#64748b] hover:text-white hover:bg-white/10 transition-colors"
+            className="p-2 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
             aria-label="Close settings"
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -125,82 +224,123 @@ function SettingsPanel({ onClose }: { onClose: () => void }) {
           </button>
         </div>
 
-        <div className="space-y-5">
-          {/* LLM Provider */}
-          <div>
-            <label htmlFor="llm-provider" className="block text-sm font-medium text-[#94a3b8] mb-2">
-              LLM Provider
-            </label>
-            <select
-              id="llm-provider"
-              className="glass-input w-full px-3 py-2.5 text-sm appearance-none"
-              defaultValue="openai"
-            >
-              <option value="openai" style={{ background: '#0f172a' }}>OpenAI (GPT-4o)</option>
-              <option value="anthropic" style={{ background: '#0f172a' }}>Anthropic (Claude 3.5)</option>
-              <option value="gemini" style={{ background: '#0f172a' }}>Google (Gemini 2.0 Flash)</option>
-              <option value="local" style={{ background: '#0f172a' }}>Local (Ollama)</option>
-            </select>
-          </div>
-
-          {/* API Key */}
-          <div>
-            <label htmlFor="api-key" className="block text-sm font-medium text-[#94a3b8] mb-2">
-              API Key
-            </label>
-            <input
-              id="api-key"
-              type="password"
-              className="glass-input w-full px-3 py-2.5 text-sm"
-              placeholder="sk-..."
-              autoComplete="off"
-            />
-          </div>
-
-          {/* Anomaly Threshold */}
-          <div>
-            <label htmlFor="threshold" className="block text-sm font-medium text-[#94a3b8] mb-2">
-              Anomaly Threshold (Z-score)
-            </label>
-            <div className="flex items-center gap-3">
-              <input
-                id="threshold"
-                type="range"
-                min="1.5"
-                max="4"
-                step="0.1"
-                defaultValue="3"
-                className="flex-1 accent-[#6366f1]"
-              />
-              <span className="text-white text-sm font-mono w-8 text-right">3.0</span>
+        {loading ? (
+          <div className="py-12 text-center text-slate-400 text-sm">Loading...</div>
+        ) : (
+          <div className="space-y-5">
+            {/* Connection Status */}
+            <div className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium ${configured ? 'bg-[#22c55e]/10 border border-[#22c55e]/20 text-[#16a34a]' : 'bg-[#f59e0b]/10 border border-[#f59e0b]/20 text-[#d97706]'}`}>
+              <span className={`w-2 h-2 rounded-full ${configured ? 'bg-[#22c55e]' : 'bg-[#f59e0b]'}`} />
+              {configured ? 'API Key 설정됨 — AI 기능 사용 가능' : 'API Key 미설정 — AI 기능을 사용하려면 키를 입력하세요'}
             </div>
-          </div>
 
-          {/* Alert Mode */}
-          <div className="flex items-center justify-between">
+            {/* LLM Provider */}
             <div>
-              <p className="text-sm font-medium text-[#94a3b8]">Real-time Alerts</p>
-              <p className="text-xs text-[#64748b] mt-0.5">Push notifications for critical alarms</p>
+              <label htmlFor="llm-provider" className="block text-sm font-medium text-slate-600 mb-2">
+                LLM Provider
+              </label>
+              <select
+                id="llm-provider"
+                className="glass-input w-full px-3 py-2.5 text-sm appearance-none"
+                value={provider}
+                onChange={(e) => handleProviderChange(e.target.value)}
+              >
+                <option value="gemini">Google Gemini</option>
+                <option value="openai">OpenAI</option>
+                <option value="anthropic">Anthropic</option>
+                <option value="ollama">Ollama (Local)</option>
+                <option value="custom">Custom Endpoint</option>
+              </select>
             </div>
-            <button
-              role="switch"
-              aria-checked="true"
-              className="relative w-11 h-6 bg-[#6366f1] rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-[#6366f1] focus:ring-offset-2 focus:ring-offset-[#020617]"
-            >
-              <span className="absolute left-5 top-1 w-4 h-4 bg-white rounded-full transition-transform" />
-            </button>
+
+            {/* API Key */}
+            <div>
+              <label htmlFor="api-key" className="block text-sm font-medium text-slate-600 mb-2">
+                API Key {provider === 'ollama' && <span className="text-slate-400">(Ollama는 키 불필요)</span>}
+              </label>
+              <input
+                id="api-key"
+                type="password"
+                className="glass-input w-full px-3 py-2.5 text-sm"
+                placeholder={preset.placeholder}
+                value={apiKey}
+                onChange={(e) => setApiKey(e.target.value)}
+                autoComplete="off"
+              />
+              {!apiKey && configured && (
+                <p className="text-slate-400 text-xs mt-1">기존 키가 설정되어 있습니다. 변경하려면 새 키를 입력하세요.</p>
+              )}
+            </div>
+
+            {/* Base URL */}
+            <div>
+              <label htmlFor="base-url" className="block text-sm font-medium text-slate-600 mb-2">
+                Base URL
+              </label>
+              <input
+                id="base-url"
+                type="text"
+                className="glass-input w-full px-3 py-2.5 text-sm font-mono"
+                value={baseUrl}
+                onChange={(e) => setBaseUrl(e.target.value)}
+                placeholder="https://api.example.com/v1"
+              />
+            </div>
+
+            {/* Model */}
+            <div>
+              <label htmlFor="model" className="block text-sm font-medium text-slate-600 mb-2">
+                Model
+              </label>
+              <input
+                id="model"
+                type="text"
+                className="glass-input w-full px-3 py-2.5 text-sm font-mono"
+                value={model}
+                onChange={(e) => setModel(e.target.value)}
+                placeholder="model-name"
+              />
+            </div>
+
+            {/* Temperature */}
+            <div>
+              <label htmlFor="temperature" className="block text-sm font-medium text-slate-600 mb-2">
+                Temperature
+              </label>
+              <div className="flex items-center gap-3">
+                <input
+                  id="temperature"
+                  type="range"
+                  min="0"
+                  max="1"
+                  step="0.1"
+                  value={temperature}
+                  onChange={(e) => setTemperature(parseFloat(e.target.value))}
+                  className="flex-1 accent-[#6366f1]"
+                />
+                <span className="text-slate-700 text-sm font-mono w-8 text-right">{temperature.toFixed(1)}</span>
+              </div>
+            </div>
+
+            {/* Status */}
+            {status && (
+              <div className={`px-3 py-2 rounded-lg text-xs font-medium ${status.type === 'success' ? 'bg-[#22c55e]/10 text-[#16a34a] border border-[#22c55e]/20' : 'bg-[#ef4444]/10 text-[#dc2626] border border-[#ef4444]/20'}`}>
+                {status.msg}
+              </div>
+            )}
           </div>
-        </div>
+        )}
 
         <div className="mt-6 flex gap-3">
           <button
-            className="flex-1 py-2.5 rounded-lg bg-[#6366f1] hover:bg-[#818cf8] text-white text-sm font-medium transition-colors"
-            onClick={onClose}
+            className="flex-1 py-2.5 rounded-lg bg-[#6366f1] hover:bg-[#4f46e5] text-white text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            onClick={handleSave}
+            disabled={saving || loading}
           >
-            Save Changes
+            {saving ? 'Saving...' : 'Save Changes'}
           </button>
           <button
-            className="px-4 py-2.5 rounded-lg text-[#94a3b8] hover:text-white hover:bg-white/10 text-sm transition-colors"
+            className="px-4 py-2.5 rounded-lg text-slate-500 hover:text-slate-800 hover:bg-slate-100 text-sm transition-colors"
             onClick={onClose}
           >
             Cancel
@@ -234,15 +374,15 @@ function NavLink({
       className={[
         'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150',
         isActive
-          ? 'bg-[#6366f1]/15 text-white border border-[#6366f1]/25'
-          : 'text-[#64748b] hover:text-[#e2e8f0] hover:bg-white/5',
+          ? 'bg-indigo-50 text-indigo-700 border border-indigo-100'
+          : 'text-slate-500 hover:text-slate-800 hover:bg-slate-50',
       ].join(' ')}
       aria-current={isActive ? 'page' : undefined}
     >
-      <span className={isActive ? 'text-[#818cf8]' : 'text-[#64748b]'}>{icon}</span>
+      <span className={isActive ? 'text-indigo-600' : 'text-slate-400'}>{icon}</span>
       <span className="flex-1">{label}</span>
       {badge != null && badge > 0 && (
-        <span className="flex items-center justify-center w-5 h-5 rounded-full bg-[#ef4444]/20 text-[#fca5a5] text-[10px] font-semibold border border-[#ef4444]/30">
+        <span className="flex items-center justify-center w-5 h-5 rounded-full bg-red-50 text-red-600 text-[10px] font-semibold border border-red-100">
           {badge}
         </span>
       )}
@@ -273,7 +413,7 @@ function Sidebar({
       {/* Mobile backdrop */}
       {isOpen && (
         <div
-          className="fixed inset-0 z-30 bg-black/50 backdrop-blur-sm lg:hidden"
+          className="fixed inset-0 z-30 bg-black/20 backdrop-blur-sm lg:hidden"
           onClick={onClose}
           aria-hidden="true"
         />
@@ -283,7 +423,7 @@ function Sidebar({
       <aside
         className={[
           'fixed top-0 left-0 z-40 h-full flex flex-col',
-          'bg-[#020617]/95 backdrop-blur-xl border-r border-white/8',
+          'bg-white border-r border-slate-200',
           'transition-transform duration-300 ease-in-out',
           'lg:translate-x-0 lg:static lg:z-auto',
           isOpen ? 'translate-x-0' : '-translate-x-full',
@@ -292,30 +432,30 @@ function Sidebar({
         aria-label="Main navigation"
       >
         {/* Logo / Title */}
-        <div className="px-5 py-5 border-b border-white/8">
+        <div className="px-5 py-5 border-b border-slate-200">
           <div className="flex items-center gap-3">
             <div
-              className="flex items-center justify-center w-9 h-9 rounded-xl bg-[#6366f1]/20 border border-[#6366f1]/30"
+              className="flex items-center justify-center w-9 h-9 rounded-xl bg-indigo-50 border border-indigo-100"
               aria-hidden="true"
             >
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="M12 2L2 7l10 5 10-5-10-5z" stroke="#818cf8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                <path d="M2 17l10 5 10-5" stroke="#818cf8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                <path d="M2 12l10 5 10-5" stroke="#6366f1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M12 2L2 7l10 5 10-5-10-5z" stroke="#6366f1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M2 17l10 5 10-5" stroke="#6366f1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M2 12l10 5 10-5" stroke="#818cf8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </div>
             <div>
-              <p className="text-white font-semibold text-sm leading-none">FDC AI</p>
-              <p className="text-[#64748b] text-[11px] mt-1">Semiconductor Dashboard</p>
+              <p className="text-slate-900 font-semibold text-sm leading-none">FDC AI</p>
+              <p className="text-slate-400 text-[11px] mt-1">Semiconductor Dashboard</p>
             </div>
           </div>
         </div>
 
         {/* System status strip */}
-        <div className="mx-4 mt-4 px-3 py-2 rounded-lg bg-[#22c55e]/8 border border-[#22c55e]/15">
+        <div className="mx-4 mt-4 px-3 py-2 rounded-lg bg-green-50 border border-green-200">
           <div className="flex items-center gap-2">
             <span className="status-dot run" aria-hidden="true" />
-            <span className="text-[#22c55e] text-xs font-medium">All Systems Normal</span>
+            <span className="text-green-700 text-xs font-medium">All Systems Normal</span>
           </div>
         </div>
 
@@ -335,16 +475,16 @@ function Sidebar({
 
           {/* Divider */}
           <div className="pt-3 pb-1" aria-hidden="true">
-            <div className="h-px bg-white/8" />
+            <div className="h-px bg-slate-200" />
           </div>
 
           {/* Settings */}
           <button
             onClick={() => { onClose(); onSettingsOpen(); }}
-            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-[#64748b] hover:text-[#e2e8f0] hover:bg-white/5 transition-all duration-150"
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-500 hover:text-slate-800 hover:bg-slate-50 transition-all duration-150"
             aria-label="Open settings panel"
           >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#64748b]" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400" aria-hidden="true">
               <circle cx="12" cy="12" r="3" />
               <path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14" />
             </svg>
@@ -353,9 +493,9 @@ function Sidebar({
         </nav>
 
         {/* Footer — version */}
-        <div className="px-5 py-4 border-t border-white/8">
-          <p className="text-[#64748b] text-[10px]">FDC AI Dashboard v0.1 POC</p>
-          <p className="text-[#64748b]/60 text-[10px] mt-0.5">Semiconductor Fab Monitoring</p>
+        <div className="px-5 py-4 border-t border-slate-200">
+          <p className="text-slate-400 text-[10px]">FDC AI Dashboard v0.1 POC</p>
+          <p className="text-slate-300 text-[10px] mt-0.5">Semiconductor Fab Monitoring</p>
         </div>
       </aside>
     </>
@@ -392,11 +532,11 @@ function Header({
   const breadcrumbs = BREADCRUMB_MAP[pathname] ?? ['FDC AI', 'Page'];
 
   return (
-    <header className="sticky top-0 z-20 flex items-center gap-4 px-4 sm:px-6 h-14 border-b border-white/8 bg-[#020617]/90 backdrop-blur-xl">
+    <header className="sticky top-0 z-20 flex items-center gap-4 px-4 sm:px-6 h-14 border-b border-slate-200 bg-white shadow-sm">
       {/* Mobile hamburger */}
       <button
         onClick={onMenuToggle}
-        className="lg:hidden p-2 rounded-lg text-[#64748b] hover:text-white hover:bg-white/10 transition-colors"
+        className="lg:hidden p-2 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
         aria-label="Toggle navigation menu"
       >
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -411,15 +551,15 @@ function Header({
         {breadcrumbs.map((segment, i) => (
           <span key={i} className="flex items-center gap-1.5 min-w-0">
             {i > 0 && (
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#334155] shrink-0" aria-hidden="true">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-300 shrink-0" aria-hidden="true">
                 <polyline points="9 18 15 12 9 6" />
               </svg>
             )}
             <span
               className={
                 i === breadcrumbs.length - 1
-                  ? 'text-white font-medium truncate'
-                  : 'text-[#64748b] truncate'
+                  ? 'text-slate-900 font-medium truncate'
+                  : 'text-slate-400 truncate'
               }
               aria-current={i === breadcrumbs.length - 1 ? 'page' : undefined}
             >
@@ -434,19 +574,19 @@ function Header({
 
       {/* Scenario selector */}
       <div className="hidden sm:flex items-center gap-2">
-        <label htmlFor="scenario-select" className="text-[#64748b] text-xs font-medium shrink-0">
+        <label htmlFor="scenario-select" className="text-slate-500 text-xs font-medium shrink-0">
           Scenario
         </label>
         <select
           id="scenario-select"
           value={scenario}
           onChange={(e) => setScenario(e.target.value)}
-          className="glass-input px-2.5 py-1.5 text-xs text-white pr-7 appearance-none cursor-pointer"
+          className="glass-input px-2.5 py-1.5 text-xs text-slate-700 pr-7 appearance-none cursor-pointer"
           style={{ backgroundImage: 'none' }}
           aria-label="Select monitoring scenario"
         >
           {SCENARIOS.map((s) => (
-            <option key={s.value} value={s.value} style={{ background: '#0f172a' }}>
+            <option key={s.value} value={s.value}>
               {s.label}
             </option>
           ))}
@@ -456,14 +596,14 @@ function Header({
       {/* Live indicator + clock */}
       <div className="flex items-center gap-2 shrink-0">
         <span
-          className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#22c55e]/10 border border-[#22c55e]/20"
+          className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-green-50 border border-green-200"
           aria-label="Live monitoring active"
         >
           <span className="status-dot run" aria-hidden="true" />
-          <span className="text-[#22c55e] text-[11px] font-medium">LIVE</span>
+          <span className="text-green-700 text-[11px] font-medium">LIVE</span>
         </span>
         <time
-          className="text-[#64748b] text-xs font-mono tabular-nums"
+          className="text-slate-400 text-xs font-mono tabular-nums"
           aria-live="polite"
           aria-atomic="true"
         >
@@ -504,7 +644,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   }, [sidebarOpen]);
 
   return (
-    <div className="flex h-screen bg-[#020617] overflow-hidden">
+    <div className="flex h-screen bg-slate-50 overflow-hidden">
       {/* Sidebar */}
       <Sidebar
         isOpen={sidebarOpen}

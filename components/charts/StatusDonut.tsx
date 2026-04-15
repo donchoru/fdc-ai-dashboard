@@ -29,11 +29,11 @@ function CustomTooltip({ active, payload }: any) {
   return (
     <div
       style={{
-        background: 'rgba(15, 23, 42, 0.96)',
-        border: '1px solid rgba(255,255,255,0.1)',
+        background: '#ffffff',
+        border: '1px solid #e2e8f0',
         borderRadius: '0.5rem',
         padding: '8px 12px',
-        boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
+        boxShadow: '0 4px 16px rgba(0,0,0,0.1)',
       }}
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -47,9 +47,9 @@ function CustomTooltip({ active, payload }: any) {
             flexShrink: 0,
           }}
         />
-        <span style={{ color: '#94a3b8', fontSize: 11 }}>{item.name}</span>
+        <span style={{ color: '#64748b', fontSize: 11 }}>{item.name}</span>
       </div>
-      <p style={{ color: '#e2e8f0', fontSize: 14, fontWeight: 700, marginTop: 2 }}>
+      <p style={{ color: '#1e293b', fontSize: 14, fontWeight: 700, marginTop: 2 }}>
         {item.value}
       </p>
     </div>
@@ -90,7 +90,7 @@ export default function StatusDonut({
               <Cell
                 key={`cell-${index}`}
                 fill={entry.color}
-                stroke="rgba(255,255,255,0.06)"
+                stroke="#f8fafc"
                 strokeWidth={1}
               />
             ))}
@@ -117,7 +117,7 @@ export default function StatusDonut({
           {centerValue !== undefined && (
             <span
               style={{
-                color: '#e2e8f0',
+                color: '#1e293b',
                 fontSize: size > 140 ? 24 : 18,
                 fontWeight: 700,
                 lineHeight: 1,

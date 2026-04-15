@@ -35,7 +35,7 @@ function renderMarkdown(text: string): React.ReactNode {
         {parts.map((part, i) => {
           if (part.startsWith('**') && part.endsWith('**')) {
             return (
-              <strong key={i} className="font-semibold text-white">
+              <strong key={i} className="font-semibold text-slate-900">
                 {part.slice(2, -2)}
               </strong>
             );
@@ -46,9 +46,9 @@ function renderMarkdown(text: string): React.ReactNode {
                 key={i}
                 className="rounded px-1 py-0.5 text-xs font-mono"
                 style={{
-                  background: 'rgba(0,0,0,0.35)',
-                  color: '#a5f3fc',
-                  border: '1px solid rgba(255,255,255,0.08)',
+                  background: '#f1f5f9',
+                  color: '#0e7490',
+                  border: '1px solid #e2e8f0',
                 }}
               >
                 {part.slice(1, -1)}
@@ -73,9 +73,9 @@ function renderMarkdown(text: string): React.ReactNode {
             key={`code-${codeBlockKey++}`}
             className="my-2 overflow-x-auto rounded-lg p-3 text-xs font-mono leading-relaxed"
             style={{
-              background: 'rgba(0,0,0,0.5)',
-              border: '1px solid rgba(255,255,255,0.08)',
-              color: '#a5f3fc',
+              background: '#f8fafc',
+              border: '1px solid #e2e8f0',
+              color: '#0e7490',
             }}
           >
             <code>{codeBlock.join('\n')}</code>
@@ -88,7 +88,7 @@ function renderMarkdown(text: string): React.ReactNode {
 
     if (line.startsWith('## ')) {
       nodes.push(
-        <p key={idx} className="mb-1 mt-3 text-xs font-semibold tracking-wide" style={{ color: 'var(--accent-light)' }}>
+        <p key={idx} className="mb-1 mt-3 text-xs font-semibold tracking-wide" style={{ color: '#4f46e5' }}>
           {renderInline(line.slice(3), `h-${idx}`)}
         </p>
       );
@@ -96,7 +96,7 @@ function renderMarkdown(text: string): React.ReactNode {
     }
     if (line.startsWith('### ')) {
       nodes.push(
-        <p key={idx} className="mb-1 mt-2 text-xs font-semibold uppercase tracking-widest" style={{ color: '#94a3b8' }}>
+        <p key={idx} className="mb-1 mt-2 text-xs font-semibold uppercase tracking-widest" style={{ color: '#64748b' }}>
           {renderInline(line.slice(4), `h3-${idx}`)}
         </p>
       );
@@ -104,7 +104,7 @@ function renderMarkdown(text: string): React.ReactNode {
     }
     if (/^[•\-\*]\s/.test(line)) {
       nodes.push(
-        <div key={idx} className="flex items-start gap-1.5 text-xs leading-relaxed" style={{ color: '#cbd5e1' }}>
+        <div key={idx} className="flex items-start gap-1.5 text-xs leading-relaxed" style={{ color: '#475569' }}>
           <span className="mt-[5px] h-1 w-1 flex-shrink-0 rounded-full" style={{ background: 'var(--accent)' }} />
           {renderInline(line.slice(2).trim(), `li-${idx}`)}
         </div>
@@ -115,10 +115,10 @@ function renderMarkdown(text: string): React.ReactNode {
       const m = line.match(/^(\d+)\.\s(.*)$/);
       if (m) {
         nodes.push(
-          <div key={idx} className="flex items-start gap-1.5 text-xs leading-relaxed" style={{ color: '#cbd5e1' }}>
+          <div key={idx} className="flex items-start gap-1.5 text-xs leading-relaxed" style={{ color: '#475569' }}>
             <span
               className="mt-[2px] flex h-3.5 w-3.5 flex-shrink-0 items-center justify-center rounded text-[10px] font-bold"
-              style={{ background: 'rgba(99,102,241,0.2)', color: 'var(--accent-light)' }}
+              style={{ background: 'rgba(99,102,241,0.1)', color: '#4f46e5' }}
             >
               {m[1]}
             </span>
@@ -133,7 +133,7 @@ function renderMarkdown(text: string): React.ReactNode {
       return;
     }
     nodes.push(
-      <p key={idx} className="text-xs leading-relaxed" style={{ color: '#cbd5e1' }}>
+      <p key={idx} className="text-xs leading-relaxed" style={{ color: '#475569' }}>
         {renderInline(line, `p-${idx}`)}
       </p>
     );
@@ -227,16 +227,16 @@ export default function AiChatBox({
       {/* ── Header ── */}
       <div
         className="flex items-center gap-2.5 p-4"
-        style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}
+        style={{ borderBottom: '1px solid #e2e8f0' }}
       >
         <div
           className="flex h-8 w-8 items-center justify-center rounded-lg"
-          style={{ background: 'rgba(99,102,241,0.15)' }}
+          style={{ background: 'rgba(99,102,241,0.08)' }}
         >
           <Bot size={15} style={{ color: 'var(--accent-light)' }} />
         </div>
         <div>
-          <h3 className="text-sm font-semibold text-white">FDC AI 어시스턴트</h3>
+          <h3 className="text-sm font-semibold text-slate-900">FDC AI 어시스턴트</h3>
           <p className="text-xs" style={{ color: 'var(--muted)' }}>
             설비, SPC, 알람 분석 질문
           </p>
@@ -266,10 +266,10 @@ export default function AiChatBox({
             >
               <MessageSquare size={24} style={{ color: 'rgba(99,102,241,0.4)' }} />
             </div>
-            <p className="text-sm font-medium" style={{ color: '#475569' }}>
+            <p className="text-sm font-medium" style={{ color: '#64748b' }}>
               무엇이든 물어보세요
             </p>
-            <p className="mt-1 text-xs" style={{ color: '#334155' }}>
+            <p className="mt-1 text-xs" style={{ color: '#94a3b8' }}>
               설비 상태, SPC, 알람 분석 등
             </p>
           </div>
@@ -289,8 +289,8 @@ export default function AiChatBox({
                   background:
                     msg.role === 'user'
                       ? 'linear-gradient(135deg, #6366f1, #4f46e5)'
-                      : 'rgba(255,255,255,0.06)',
-                  border: '1px solid rgba(255,255,255,0.1)',
+                      : '#f1f5f9',
+                  border: msg.role === 'user' ? 'none' : '1px solid #e2e8f0',
                 }}
                 aria-hidden="true"
               >
@@ -307,13 +307,13 @@ export default function AiChatBox({
                 style={
                   msg.role === 'user'
                     ? {
-                        background: 'linear-gradient(135deg, rgba(99,102,241,0.25), rgba(79,70,229,0.2))',
-                        border: '1px solid rgba(99,102,241,0.25)',
+                        background: 'linear-gradient(135deg, rgba(99,102,241,0.12), rgba(79,70,229,0.08))',
+                        border: '1px solid rgba(99,102,241,0.2)',
                         borderBottomRightRadius: '4px',
                       }
                     : {
-                        background: 'rgba(255,255,255,0.04)',
-                        border: '1px solid rgba(255,255,255,0.08)',
+                        background: '#f8fafc',
+                        border: '1px solid #e2e8f0',
                         borderBottomLeftRadius: '4px',
                       }
                 }
@@ -337,8 +337,8 @@ export default function AiChatBox({
               <div
                 className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full"
                 style={{
-                  background: 'rgba(255,255,255,0.06)',
-                  border: '1px solid rgba(255,255,255,0.1)',
+                  background: '#f1f5f9',
+                  border: '1px solid #e2e8f0',
                 }}
                 aria-hidden="true"
               >
@@ -347,8 +347,8 @@ export default function AiChatBox({
               <div
                 className="rounded-2xl px-3.5 py-2.5"
                 style={{
-                  background: 'rgba(255,255,255,0.04)',
-                  border: '1px solid rgba(255,255,255,0.08)',
+                  background: '#f8fafc',
+                  border: '1px solid #e2e8f0',
                   borderBottomLeftRadius: '4px',
                 }}
               >
@@ -364,9 +364,9 @@ export default function AiChatBox({
       {showSuggestions && (
         <div
           className="px-4 pb-2 pt-1"
-          style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}
+          style={{ borderTop: '1px solid #f1f5f9' }}
         >
-          <p className="mb-2 text-xs" style={{ color: '#475569' }}>추천 질문</p>
+          <p className="mb-2 text-xs" style={{ color: '#64748b' }}>추천 질문</p>
           <div className="flex flex-wrap gap-1.5">
             {suggestions.map((q, i) => (
               <button
@@ -374,17 +374,17 @@ export default function AiChatBox({
                 onClick={() => { setInput(q); textareaRef.current?.focus(); }}
                 className="rounded-lg px-2.5 py-1 text-xs transition-all"
                 style={{
-                  background: 'rgba(99,102,241,0.08)',
+                  background: 'rgba(99,102,241,0.06)',
                   border: '1px solid rgba(99,102,241,0.15)',
-                  color: '#94a3b8',
+                  color: '#6366f1',
                 }}
                 onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLButtonElement).style.background = 'rgba(99,102,241,0.15)';
-                  (e.currentTarget as HTMLButtonElement).style.color = '#c7d2fe';
+                  (e.currentTarget as HTMLButtonElement).style.background = 'rgba(99,102,241,0.12)';
+                  (e.currentTarget as HTMLButtonElement).style.color = '#4f46e5';
                 }}
                 onMouseLeave={(e) => {
-                  (e.currentTarget as HTMLButtonElement).style.background = 'rgba(99,102,241,0.08)';
-                  (e.currentTarget as HTMLButtonElement).style.color = '#94a3b8';
+                  (e.currentTarget as HTMLButtonElement).style.background = 'rgba(99,102,241,0.06)';
+                  (e.currentTarget as HTMLButtonElement).style.color = '#6366f1';
                 }}
               >
                 {q}
@@ -397,13 +397,13 @@ export default function AiChatBox({
       {/* ── Input area ── */}
       <div
         className="p-3"
-        style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}
+        style={{ borderTop: '1px solid #e2e8f0' }}
       >
         <div
           className="flex items-end gap-2 rounded-xl p-2"
           style={{
-            background: 'rgba(255,255,255,0.04)',
-            border: '1px solid rgba(255,255,255,0.08)',
+            background: '#f8fafc',
+            border: '1px solid #e2e8f0',
           }}
         >
           <textarea
@@ -414,8 +414,8 @@ export default function AiChatBox({
             placeholder="메시지를 입력하세요... (Enter 전송, Shift+Enter 줄바꿈)"
             disabled={isLoading}
             rows={1}
-            className="flex-1 resize-none bg-transparent text-xs leading-relaxed text-white placeholder-slate-600 focus:outline-none"
-            style={{ maxHeight: '120px', minHeight: '20px' }}
+            className="flex-1 resize-none bg-transparent text-xs leading-relaxed placeholder-slate-400 focus:outline-none"
+            style={{ maxHeight: '120px', minHeight: '20px', color: '#1e293b' }}
             aria-label="메시지 입력"
           />
           <button
