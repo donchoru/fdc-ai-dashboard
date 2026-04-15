@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
+import { CheckCircle } from 'lucide-react';
 import { Alarm, Severity } from '@/lib/types';
 import { SEVERITY_COLORS } from '@/lib/constants';
 import SeverityBadge from '@/components/badges/SeverityBadge';
@@ -84,27 +85,27 @@ export default function AlarmTable({ alarms, onAcknowledge }: AlarmTableProps) {
         <thead>
           <tr>
             <SortableTh
-              label="Time"
+              label="시간"
               sortKey="time"
               current={sortKey}
               dir={sortDir}
               onSort={handleSort}
             />
             <SortableTh
-              label="Severity"
+              label="심각도"
               sortKey="severity"
               current={sortKey}
               dir={sortDir}
               onSort={handleSort}
             />
-            <StaticTh label="Equipment" />
-            <StaticTh label="Code" />
-            <StaticTh label="Alarm Name" />
-            <StaticTh label="Description" />
-            <StaticTh label="Value" />
-            <StaticTh label="Process" />
-            <StaticTh label="Status" />
-            {onAcknowledge && <StaticTh label="Action" />}
+            <StaticTh label="설비" />
+            <StaticTh label="코드" />
+            <StaticTh label="알람명" />
+            <StaticTh label="설명" />
+            <StaticTh label="값" />
+            <StaticTh label="공정" />
+            <StaticTh label="상태" />
+            {onAcknowledge && <StaticTh label="조치" />}
           </tr>
         </thead>
         <tbody>
@@ -115,7 +116,7 @@ export default function AlarmTable({ alarms, onAcknowledge }: AlarmTableProps) {
                 className="py-10 text-center"
                 style={{ color: 'var(--muted)', fontSize: 13 }}
               >
-                No alarms found
+                알람 없음
               </td>
             </tr>
           )}
@@ -205,25 +206,42 @@ export default function AlarmTable({ alarms, onAcknowledge }: AlarmTableProps) {
                 </td>
                 {onAcknowledge && (
                   <td className="px-3 py-2.5">
-                    {!alarm.acknowledged && alarm.status === 'ACTIVE' ? (
+                    {alarm.status === 'ACTIVE' && !alarm.acknowledged ? (
                       <button
                         onClick={() => onAcknowledge(alarm.id)}
-                        className="text-[11px] font-semibold px-2.5 py-1 rounded-md transition-all duration-150"
+                        className="inline-flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-md transition-all duration-150"
                         style={{
-                          background: 'rgba(99,102,241,0.08)',
-                          color: '#4f46e5',
-                          border: '1px solid rgba(99,102,241,0.2)',
+                          background: 'rgba(22,163,74,0.07)',
+                          color: '#16a34a',
+                          border: '1px solid rgba(22,163,74,0.2)',
                         }}
                         onMouseEnter={(e) => {
-                          (e.currentTarget as HTMLButtonElement).style.background = 'rgba(99,102,241,0.15)';
+                          const btn = e.currentTarget as HTMLButtonElement;
+                          btn.style.background = 'rgba(22,163,74,0.15)';
+                          btn.style.borderColor = 'rgba(22,163,74,0.4)';
                         }}
                         onMouseLeave={(e) => {
-                          (e.currentTarget as HTMLButtonElement).style.background = 'rgba(99,102,241,0.08)';
+                          const btn = e.currentTarget as HTMLButtonElement;
+                          btn.style.background = 'rgba(22,163,74,0.07)';
+                          btn.style.borderColor = 'rgba(22,163,74,0.2)';
                         }}
-                        aria-label={`Acknowledge alarm ${alarm.alarmCode}`}
+                        aria-label={`알람 확인 ${alarm.alarmCode}`}
                       >
-                        ACK
+                        <CheckCircle size={12} aria-hidden="true" />
+                        확인
                       </button>
+                    ) : alarm.acknowledged || alarm.status === 'ACKNOWLEDGED' ? (
+                      <span
+                        className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full"
+                        style={{
+                          background: 'rgba(100,116,139,0.08)',
+                          color: '#94a3b8',
+                          border: '1px solid rgba(100,116,139,0.18)',
+                        }}
+                      >
+                        <CheckCircle size={10} aria-hidden="true" />
+                        확인됨
+                      </span>
                     ) : (
                       <span style={{ color: 'var(--muted)', fontSize: 11 }}>—</span>
                     )}
