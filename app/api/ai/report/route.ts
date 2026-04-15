@@ -3,6 +3,8 @@ import { REPORT_SYSTEM_PROMPT } from '@/lib/prompts';
 import { getFdcData, getEquipmentList } from '@/lib/fdc-data';
 import { getAlarmData, getAlarmSummary } from '@/lib/alarm-data';
 import { getSpcData } from '@/lib/spc-data';
+import { createDemoStream, SSE_HEADERS } from '@/lib/demo-stream';
+import { MOCK_SHIFT_REPORT, MOCK_DAILY_REPORT } from '@/lib/mock-responses';
 
 type ReportType = 'shift' | 'daily';
 
@@ -14,7 +16,7 @@ const SHIFT_HOURS: Record<string, { label: string; durationHours: number }> = {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { type } = body as { type?: ReportType };
+    const { type, demo } = body as { type?: ReportType; demo?: boolean };
 
     if (!type || !['shift', 'daily'].includes(type)) {
       return Response.json(
@@ -24,11 +26,12 @@ export async function POST(req: Request) {
     }
 
     const config = getLlmConfig();
-    if (!config.apiKey) {
-      return Response.json(
-        { error: 'LLM API key not configured. Set GEMINI_API_KEY environment variable.' },
-        { status: 400 },
-      );
+    const isDemoMode = demo === true || !config.apiKey;
+
+    // Demo mode: stream pre-written mock response
+    if (isDemoMode) {
+      const mockText = type === 'daily' ? MOCK_DAILY_REPORT : MOCK_SHIFT_REPORT;
+      return new Response(createDemoStream(mockText), { headers: SSE_HEADERS });
     }
 
     const now = new Date();
@@ -129,16 +132,16 @@ export async function POST(req: Request) {
     };
 
     const userMessage = [
-      `Generate a complete ${label} engineering report for the period:`,
-      `- Start: ${shiftStart.toISOString()}`,
-      `- End: ${now.toISOString()}`,
+      `다음 기간의 ${label} 엔지니어링 리포트를 한국어로 작성하세요:`,
+      `- 시작: ${shiftStart.toISOString()}`,
+      `- 종료: ${now.toISOString()}`,
       '',
-      '## FAB Snapshot Data',
+      '## FAB 스냅샷 데이터',
       '```json',
       JSON.stringify(reportContext, null, 2),
       '```',
       '',
-      'Generate a complete, professional report following the specified format with all sections.',
+      '모든 섹션을 포함한 완전한 한국어 엔지니어링 리포트를 작성하세요.',
     ].join('\n');
 
     const client = createLlmClient();

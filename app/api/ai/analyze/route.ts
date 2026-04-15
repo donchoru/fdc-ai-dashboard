@@ -3,13 +3,16 @@ import { ANALYSIS_SYSTEM_PROMPT } from '@/lib/prompts';
 import { getFdcData } from '@/lib/fdc-data';
 import { getAlarmData } from '@/lib/alarm-data';
 import { getSpcData } from '@/lib/spc-data';
+import { createDemoStream, SSE_HEADERS } from '@/lib/demo-stream';
+import { MOCK_ANALYSIS_REPORT } from '@/lib/mock-responses';
 
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { scenario, equipmentId } = body as {
+    const { scenario, equipmentId, demo } = body as {
       scenario?: string;
       equipmentId?: string;
+      demo?: boolean;
     };
 
     if (!scenario) {
@@ -20,11 +23,11 @@ export async function POST(req: Request) {
     }
 
     const config = getLlmConfig();
-    if (!config.apiKey) {
-      return Response.json(
-        { error: 'LLM API key not configured. Set GEMINI_API_KEY environment variable.' },
-        { status: 400 },
-      );
+    const isDemoMode = demo === true || !config.apiKey;
+
+    // Demo mode: stream pre-written mock response
+    if (isDemoMode) {
+      return new Response(createDemoStream(MOCK_ANALYSIS_REPORT), { headers: SSE_HEADERS });
     }
 
     // Build context from FDC data, alarms, SPC for the scenario

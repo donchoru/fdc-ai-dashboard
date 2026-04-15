@@ -4,11 +4,13 @@ import { getFdcData, getEquipmentList } from '@/lib/fdc-data';
 import { getAlarmData } from '@/lib/alarm-data';
 import { getSpcData } from '@/lib/spc-data';
 import type { ChatMessage } from '@/lib/types';
+import { createDemoStream, SSE_HEADERS } from '@/lib/demo-stream';
+import { pickChatResponse } from '@/lib/mock-responses';
 
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { messages } = body as { messages?: ChatMessage[] };
+    const { messages, demo } = body as { messages?: ChatMessage[]; demo?: boolean };
 
     if (!messages || !Array.isArray(messages) || messages.length === 0) {
       return Response.json(
@@ -18,11 +20,13 @@ export async function POST(req: Request) {
     }
 
     const config = getLlmConfig();
-    if (!config.apiKey) {
-      return Response.json(
-        { error: 'LLM API key not configured. Set GEMINI_API_KEY environment variable.' },
-        { status: 400 },
-      );
+    const isDemoMode = demo === true || !config.apiKey;
+
+    // Demo mode: pick keyword-matched response and stream it
+    if (isDemoMode) {
+      const lastUserMessage = [...messages].reverse().find((m) => m.role === 'user')?.content ?? '';
+      const mockResponse = pickChatResponse(lastUserMessage);
+      return new Response(createDemoStream(mockResponse), { headers: SSE_HEADERS });
     }
 
     // Build current FAB status context as a system injection
