@@ -146,13 +146,22 @@ body {
   background: #94a3b8;
 }
 
-/* Chart tooltip */
+/* Chart tooltip — fix glass-card backdrop-blur interference */
+.recharts-tooltip-wrapper {
+  z-index: 50 !important;
+  pointer-events: none;
+}
 .recharts-tooltip-wrapper .recharts-default-tooltip {
   background: #ffffff !important;
   border: 1px solid #e2e8f0 !important;
   border-radius: 0.5rem !important;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1) !important;
   color: #1e293b !important;
+}
+
+/* Isolate recharts from backdrop-filter blur artifacts */
+.recharts-wrapper {
+  isolation: isolate;
 }
 
 /* Table styles */
@@ -239,3 +248,44 @@ body {
 .animate-fade-in-delay-1 { animation-delay: 0.1s; }
 .animate-fade-in-delay-2 { animation-delay: 0.2s; }
 .animate-fade-in-delay-3 { animation-delay: 0.3s; }
+
+/* ── Print styles for report ── */
+@media print {
+  /* Hide everything except report area */
+  body > *:not(#interactive-report):not(:has(#interactive-report)) {
+    display: none !important;
+  }
+  nav, aside, header, .print\\:hidden {
+    display: none !important;
+  }
+  #interactive-report,
+  #report-print-area {
+    max-height: none !important;
+    overflow: visible !important;
+  }
+  #interactive-report {
+    box-shadow: none !important;
+    border: none !important;
+  }
+  /* Keep charts together */
+  .recharts-wrapper,
+  .recharts-responsive-container {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  /* Donut charts */
+  .recharts-wrapper svg {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  /* Chart sections */
+  #report-print-area > div {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  /* Reset backgrounds for print */
+  .glass-card {
+    background: #fff !important;
+    backdrop-filter: none !important;
+  }
+}
