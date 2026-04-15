@@ -65,7 +65,7 @@ function CustomTooltip(props: any) {
           <Row label="LCL" value={point.lcl} color="#ef444499" />
           {isOos && (
             <p style={{ color: '#ef4444', fontSize: 10, marginTop: 4, fontWeight: 700 }}>
-              OUT OF SPEC
+              규격 이탈
             </p>
           )}
         </div>
@@ -101,6 +101,14 @@ export default function TraceChart({
 
   const oosPoints = data.filter((d) => d.status === 'OOS');
 
+  // Auto Y-axis domain: fit to data range with padding around UCL/LCL
+  const allValues = data.map((d) => d.value);
+  const dataMin = Math.min(...allValues, lcl);
+  const dataMax = Math.max(...allValues, ucl);
+  const range = dataMax - dataMin;
+  const padding = range * 0.15 || 0.1;
+  const yDomain: [number, number] = [dataMin - padding, dataMax + padding];
+
   return (
     <div className="w-full">
       {title && (
@@ -125,9 +133,16 @@ export default function TraceChart({
         >
           <defs>
             <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor={areaColor} stopOpacity={0.25} />
-              <stop offset="95%" stopColor={areaColor} stopOpacity={0.02} />
+              <stop offset="5%" stopColor={areaColor} stopOpacity={0.3} />
+              <stop offset="95%" stopColor={areaColor} stopOpacity={0.03} />
             </linearGradient>
+            <filter id={`glow-${gradientId}`}>
+              <feGaussianBlur stdDeviation="2" result="coloredBlur" />
+              <feMerge>
+                <feMergeNode in="coloredBlur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
           </defs>
 
           <CartesianGrid
@@ -144,6 +159,7 @@ export default function TraceChart({
             interval="preserveStartEnd"
           />
           <YAxis
+            domain={yDomain}
             tick={{ fill: '#94a3b8', fontSize: 10 }}
             axisLine={false}
             tickLine={false}
@@ -186,7 +202,7 @@ export default function TraceChart({
             strokeWidth={2}
             fill={`url(#${gradientId})`}
             dot={false}
-            activeDot={{ r: 4, fill: areaStroke, stroke: '#ffffff', strokeWidth: 2 }}
+            activeDot={{ r: 6, fill: areaStroke, stroke: '#ffffff', strokeWidth: 3, style: { filter: `drop-shadow(0 0 4px ${areaStroke})` } }}
             isAnimationActive={true}
             animationDuration={500}
             animationEasing="ease-out"

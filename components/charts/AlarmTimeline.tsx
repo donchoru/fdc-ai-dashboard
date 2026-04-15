@@ -57,7 +57,7 @@ export default function AlarmTimeline({
         className="flex items-center justify-center py-10"
         style={{ color: 'var(--muted)', fontSize: 13 }}
       >
-        No alarms in timeline
+        알람 이력 없음
       </div>
     );
   }
@@ -73,7 +73,8 @@ export default function AlarmTimeline({
           <div
             key={alarm.id}
             role="listitem"
-            className="flex gap-3 items-stretch min-w-0"
+            className="flex gap-3 items-stretch min-w-0 animate-fade-in"
+            style={{ animationDelay: `${idx * 0.05}s` }}
           >
             {/* Left: time */}
             <div
@@ -96,22 +97,24 @@ export default function AlarmTimeline({
                   height: 12,
                   borderRadius: '50%',
                   background: dotColor,
-                  boxShadow: `0 0 8px ${dotColor}80`,
+                  boxShadow: `0 0 0 3px ${dotColor}20, 0 0 8px ${dotColor}40`,
                   flexShrink: 0,
                   marginTop: 3,
                   border: '2px solid #ffffff',
+                  animation: alarm.severity === 'CRITICAL' ? 'pulse-red 2s ease-in-out infinite' : undefined,
                 }}
                 aria-hidden="true"
               />
               {!isLast && (
                 <div
                   style={{
-                    width: 1.5,
+                    width: 2,
                     flex: 1,
                     minHeight: 16,
-                    background: '#e2e8f0',
+                    background: 'linear-gradient(to bottom, #e2e8f0, #f1f5f9)',
                     marginTop: 3,
                     marginBottom: 3,
+                    borderRadius: 1,
                   }}
                   aria-hidden="true"
                 />
@@ -170,7 +173,7 @@ export default function AlarmTimeline({
               {alarm.value !== null && (
                 <div className="mt-1">
                   <span className="text-[10px]" style={{ color: 'var(--muted)' }}>
-                    Value:{' '}
+                    값:{' '}
                   </span>
                   <span
                     className="text-[10px] font-semibold"
@@ -180,7 +183,7 @@ export default function AlarmTimeline({
                   </span>
                   {alarm.spec && (
                     <span className="text-[10px]" style={{ color: 'var(--muted)' }}>
-                      {' '}/ Spec: {alarm.spec}
+                      {' '}/ 규격: {alarm.spec}
                     </span>
                   )}
                 </div>

@@ -12,11 +12,11 @@ interface EquipmentCardProps {
 }
 
 const STATUS_LABELS: Record<string, string> = {
-  RUN: 'Running',
-  IDLE: 'Idle',
-  DOWN: 'Down',
-  PM: 'Preventive Maint.',
-  ENGINEERING: 'Engineering',
+  RUN: '가동',
+  IDLE: '대기',
+  DOWN: '정지',
+  PM: 'PM 정비',
+  ENGINEERING: '엔지니어링',
 };
 
 const PROCESS_SHORT: Record<string, string> = {
@@ -45,6 +45,7 @@ export default function EquipmentCard({
       hover
       onClick={onClick}
       className="p-4 flex flex-col gap-3 min-w-0"
+      style={{ borderLeft: `3px solid ${statusColor}` }}
     >
       {/* Top: status dot + name + badges */}
       <div className="flex items-start justify-between gap-2 min-w-0">
@@ -96,10 +97,10 @@ export default function EquipmentCard({
 
       {/* Meta info */}
       <div className="grid grid-cols-2 gap-x-3 gap-y-1">
-        <MetaItem label="Vendor" value={equipment.vendor} />
-        <MetaItem label="Line" value={equipment.line} />
-        <MetaItem label="Process" value={PROCESS_SHORT[equipment.process] ?? equipment.process.toUpperCase()} />
-        <MetaItem label="Chambers" value={String(equipment.chamberCount)} />
+        <MetaItem label="제조사" value={equipment.vendor} />
+        <MetaItem label="라인" value={equipment.line} />
+        <MetaItem label="공정" value={PROCESS_SHORT[equipment.process] ?? equipment.process.toUpperCase()} />
+        <MetaItem label="챔버" value={String(equipment.chamberCount)} />
       </div>
 
       {/* Footer: status pill + wafer count */}

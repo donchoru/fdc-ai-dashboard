@@ -71,6 +71,14 @@ export default function StatusDonut({
     <div style={{ width: size, height: size, position: 'relative', flexShrink: 0 }}>
       <ResponsiveContainer width="100%" height="100%">
         <PieChart>
+          <defs>
+            {data.map((entry, i) => (
+              <linearGradient key={`grad-${i}`} id={`donut-grad-${i}`} x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stopColor={entry.color} stopOpacity={1} />
+                <stop offset="100%" stopColor={entry.color} stopOpacity={0.7} />
+              </linearGradient>
+            ))}
+          </defs>
           <Pie
             data={data}
             cx="50%"
@@ -89,9 +97,9 @@ export default function StatusDonut({
             {data.map((entry, index) => (
               <Cell
                 key={`cell-${index}`}
-                fill={entry.color}
+                fill={`url(#donut-grad-${index})`}
                 stroke="#f8fafc"
-                strokeWidth={1}
+                strokeWidth={2}
               />
             ))}
           </Pie>
@@ -99,6 +107,22 @@ export default function StatusDonut({
           <Tooltip content={CustomTooltip as any} />
         </PieChart>
       </ResponsiveContainer>
+
+      {/* Center background glow circle */}
+      <div
+        style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: inner * 1.8,
+          height: inner * 1.8,
+          borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(255,255,255,0.9) 0%, rgba(248,250,252,0.5) 100%)',
+          pointerEvents: 'none',
+        }}
+        aria-hidden="true"
+      />
 
       {/* Center text overlay */}
       {(centerLabel !== undefined || centerValue !== undefined) && (

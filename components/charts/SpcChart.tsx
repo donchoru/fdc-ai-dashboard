@@ -53,7 +53,7 @@ function CustomTooltip({ active, payload }: any) {
         boxShadow: '0 4px 16px rgba(0,0,0,0.1)',
       }}
     >
-      <p style={{ color: '#64748b', fontSize: 11, marginBottom: 4 }}>Sample {p.label}</p>
+      <p style={{ color: '#64748b', fontSize: 11, marginBottom: 4 }}>샘플 {p.label}</p>
       <p style={{
         color: p.isOoc ? '#dc2626' : '#4f46e5',
         fontSize: 14,
@@ -63,7 +63,7 @@ function CustomTooltip({ active, payload }: any) {
       </p>
       {p.isOoc && (
         <p style={{ color: '#ef4444', fontSize: 10, marginTop: 4, fontWeight: 700 }}>
-          OUT OF CONTROL
+          관리 이탈
         </p>
       )}
     </div>
@@ -87,6 +87,14 @@ export default function SpcChart({
   const warn1sigNeg = target - sigma;
 
   const oocSet = new Set(data.oocViolations.map((v) => v.index));
+
+  // Auto Y-axis domain: fit to data range with padding around UCL/LCL
+  const allValues = data.recentValues;
+  const dataMin = Math.min(...allValues, lcl);
+  const dataMax = Math.max(...allValues, ucl);
+  const range = dataMax - dataMin;
+  const padding = range * 0.15 || 0.1;
+  const yDomain: [number, number] = [dataMin - padding, dataMax + padding];
 
   return (
     <div className="w-full">
@@ -122,6 +130,7 @@ export default function SpcChart({
             interval="preserveStartEnd"
           />
           <YAxis
+            domain={yDomain}
             tick={{ fill: '#94a3b8', fontSize: 10 }}
             axisLine={false}
             tickLine={false}
@@ -213,7 +222,7 @@ export default function SpcChart({
 
           {/* Main data line */}
           <Line
-            type="linear"
+            type="monotone"
             dataKey="value"
             stroke="#818cf8"
             strokeWidth={2}
@@ -221,15 +230,20 @@ export default function SpcChart({
               const { cx, cy, index } = props;
               const isOoc = oocSet.has(index);
               return (
-                <circle
-                  key={`dot-${index}`}
-                  cx={cx}
-                  cy={cy}
-                  r={isOoc ? 5 : 3}
-                  fill={isOoc ? '#ef4444' : '#6366f1'}
-                  stroke={isOoc ? '#fca5a5' : '#e0e7ff'}
-                  strokeWidth={isOoc ? 2 : 1}
-                />
+                <g key={`dot-${index}`}>
+                  {isOoc && (
+                    <circle cx={cx} cy={cy} r={10} fill="none" stroke="#ef4444" strokeWidth={1} opacity={0.3} />
+                  )}
+                  <circle
+                    cx={cx}
+                    cy={cy}
+                    r={isOoc ? 5 : 3}
+                    fill={isOoc ? '#ef4444' : '#6366f1'}
+                    stroke={isOoc ? '#fca5a5' : '#e0e7ff'}
+                    strokeWidth={isOoc ? 2 : 1}
+                    style={isOoc ? { filter: 'drop-shadow(0 0 4px rgba(239,68,68,0.5))' } : undefined}
+                  />
+                </g>
               );
             }}
             activeDot={{ r: 5, fill: '#818cf8', stroke: '#ffffff', strokeWidth: 2 }}

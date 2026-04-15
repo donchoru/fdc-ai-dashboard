@@ -31,13 +31,17 @@ export default function KpiCard({
     <GlassCard solid hover className="p-5 flex flex-col gap-3 min-w-0">
       {/* Header row */}
       <div className="flex items-center justify-between">
-        <span
-          className="text-2xl leading-none"
-          role="img"
-          aria-label={label}
+        <div
+          className="flex items-center justify-center w-10 h-10 rounded-xl"
+          style={{
+            background: `linear-gradient(135deg, ${color}15, ${color}08)`,
+            boxShadow: `0 2px 8px ${color}15`,
+          }}
         >
-          {icon}
-        </span>
+          <span className="text-xl leading-none" role="img" aria-label={label}>
+            {icon}
+          </span>
+        </div>
         {trend && trendValue && (
           <span
             className={`text-xs font-medium flex items-center gap-0.5 trend-${trend}`}
@@ -69,10 +73,10 @@ export default function KpiCard({
         {label}
       </p>
 
-      {/* Accent bottom bar */}
+      {/* Animated gradient bottom bar */}
       <div
-        className="h-0.5 rounded-full mt-auto"
-        style={{ background: `linear-gradient(90deg, ${color}60, transparent)` }}
+        className="h-1 rounded-full mt-auto gradient-bar"
+        style={{ opacity: 0.6 }}
         aria-hidden="true"
       />
     </GlassCard>
