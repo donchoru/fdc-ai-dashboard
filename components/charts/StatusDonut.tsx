@@ -6,7 +6,6 @@ import {
   Cell,
   ResponsiveContainer,
   Tooltip,
-  type TooltipContentProps,
 } from 'recharts';
 
 interface DonutData {
@@ -23,7 +22,8 @@ interface StatusDonutProps {
   centerValue?: string | number;
 }
 
-function CustomTooltip({ active, payload }: TooltipContentProps<number, string>) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function CustomTooltip({ active, payload }: any) {
   if (!active || !payload || payload.length === 0) return null;
   const item = payload[0];
   return (
