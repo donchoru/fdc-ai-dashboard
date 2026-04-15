@@ -430,28 +430,28 @@ export function getSpcScenarios() {
   return [
     {
       id: 'NORMAL',
-      name: 'Normal Operation',
-      description: 'All parameters in statistical control (Cpk ≥ 1.33)',
+      name: '정상 운전',
+      description: '모든 파라미터 통계적 관리 상태 (Cpk ≥ 1.33)',
     },
     {
       id: 'OOC-DRIFT',
-      name: 'Gate CD Drift (Rule 3)',
-      description: 'Monotone upward drift in gate CD — WE Rule 3 violation, throttle valve calibration suspect',
+      name: '게이트 CD 드리프트 (Rule 3)',
+      description: '게이트 CD 단조 상승 드리프트 — WE Rule 3 위반, 쓰로틀 밸브 교정 이상 의심',
     },
     {
       id: 'OOC-SHIFT',
-      name: 'Overlay X Shift (Rule 2)',
-      description: 'Systematic shift in X overlay — WE Rule 2 violation, stage thermal drift suspected',
+      name: 'Overlay X 시프트 (Rule 2)',
+      description: 'X 오버레이 계통적 이동 — WE Rule 2 위반, 스테이지 열 드리프트 의심',
     },
     {
       id: 'OOC-SPIKE',
-      name: 'CMP Rate Spike (Rule 1)',
-      description: 'Single OOC spike in Cu removal rate — WE Rule 1 violation, slurry concentration excursion',
+      name: 'CMP 제거율 급변 (Rule 1)',
+      description: 'Cu 제거율 단발성 OOC 급변 — WE Rule 1 위반, 슬러리 농도 이상',
     },
     {
       id: 'OOC-OSCILLATION',
-      name: 'Oxide Thickness Oscillation (Rule 4)',
-      description: 'Alternating pattern in oxide thickness — WE Rule 4 violation, zone temperature hunting',
+      name: '산화막 두께 진동 (Rule 4)',
+      description: '산화막 두께 교대 패턴 — WE Rule 4 위반, Zone 온도 헌팅',
     },
   ];
 }

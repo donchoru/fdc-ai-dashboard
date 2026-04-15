@@ -149,6 +149,13 @@ function MetaPill({
   );
 }
 
+// ── Parameter status Korean labels ────────────────────────────────────────
+const PARAM_STATUS_KO: Record<string, string> = {
+  NORMAL: '정상',
+  WARNING: '경고',
+  OOS: 'OOS',
+};
+
 // ── Trace card wrapper ────────────────────────────────────────────────────
 function TraceCardWrapper({
   parameter,
@@ -205,7 +212,7 @@ function TraceCardWrapper({
                     }
               }
             >
-              {parameter.status}
+              {PARAM_STATUS_KO[parameter.status] ?? parameter.status}
             </span>
           </div>
           <p
@@ -415,12 +422,12 @@ function EquipmentDetailContent({
       });
 
       if (!res.ok) {
-        const err = await res.json().catch(() => ({ error: 'Request failed' }));
+        const err = await res.json().catch(() => ({ error: '요청 실패' }));
         throw new Error(err.error ?? `HTTP ${res.status}`);
       }
 
       const reader = res.body?.getReader();
-      if (!reader) throw new Error('No response body');
+      if (!reader) throw new Error('응답 본문 없음');
 
       const decoder = new TextDecoder();
       let buffer = '';

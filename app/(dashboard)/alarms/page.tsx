@@ -332,7 +332,7 @@ function AlarmsContent() {
       params.set('includeSummary', 'true');
       if (urlScenario !== 'normal') params.set('scenario', urlScenario);
       const res = await fetch(`/api/alarms?${params.toString()}`);
-      if (!res.ok) throw new Error(`API error ${res.status}`);
+      if (!res.ok) throw new Error(`API 오류 ${res.status}`);
       const json: AlarmApiResponse = await res.json();
       setAlarms(json.alarms);
     } catch (err) {
@@ -347,7 +347,7 @@ function AlarmsContent() {
     setCorrelationsLoading(true);
     try {
       const res = await fetch('/api/alarms/correlations');
-      if (!res.ok) throw new Error(`API error ${res.status}`);
+      if (!res.ok) throw new Error(`API 오류 ${res.status}`);
       const json: CorrelationApiResponse = await res.json();
       setCorrelations(json.correlations);
     } catch {

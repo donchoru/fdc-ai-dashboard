@@ -39,6 +39,12 @@ const STATUS_STYLES: Record<string, { color: string; bg: string; border: string 
   },
 };
 
+const STATUS_LABELS_KO: Record<string, string> = {
+  ACTIVE: '활성',
+  ACKNOWLEDGED: '확인됨',
+  CLEARED: '해제',
+};
+
 function formatTimestamp(ts: string): string {
   try {
     const d = new Date(ts);
@@ -194,14 +200,14 @@ export default function AlarmTable({ alarms, onAcknowledge }: AlarmTableProps) {
                 </td>
                 <td className="px-3 py-2.5">
                   <span
-                    className="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider"
+                    className="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold tracking-wider"
                     style={{
                       color: statusStyle.color,
                       background: statusStyle.bg,
                       border: `1px solid ${statusStyle.border}`,
                     }}
                   >
-                    {alarm.status}
+                    {STATUS_LABELS_KO[alarm.status] ?? alarm.status}
                   </span>
                 </td>
                 {onAcknowledge && (

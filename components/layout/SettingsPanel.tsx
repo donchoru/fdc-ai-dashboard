@@ -91,14 +91,14 @@ export default function SettingsPanel({ onClose }: SettingsPanelProps) {
       });
       if (!res.ok) {
         const err = await res.json();
-        throw new Error(err.error || 'Failed to save');
+        throw new Error(err.error || '저장 실패');
       }
       const data = await res.json();
       setConfigured(data.config?.configured ?? false);
       setStatus({ type: 'success', msg: '설정이 저장되었습니다' });
       setTimeout(() => onClose(), 1200);
     } catch (e: unknown) {
-      setStatus({ type: 'error', msg: e instanceof Error ? e.message : 'Save failed' });
+      setStatus({ type: 'error', msg: e instanceof Error ? e.message : '저장 실패' });
     } finally {
       setSaving(false);
     }

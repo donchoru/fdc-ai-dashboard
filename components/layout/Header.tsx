@@ -192,7 +192,7 @@ export default function Header({ onMenuToggle }: HeaderProps) {
             aria-label="실시간 모니터링 활성"
           >
             <span className="status-dot run" aria-hidden="true" />
-            <span className="text-green-700 text-[11px] font-medium">LIVE</span>
+            <span className="text-green-700 text-[11px] font-medium">실시간</span>
           </span>
           <time
             className="text-slate-400 text-xs font-mono tabular-nums"

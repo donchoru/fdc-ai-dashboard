@@ -14,13 +14,13 @@ const STATUS_CONFIG: Record<
   { label: string; color: string; bg: string; border: string }
 > = {
   NORMAL: {
-    label: 'NORMAL',
+    label: '정상',
     color: '#16a34a',
     bg: 'rgba(34,197,94,0.08)',
     border: 'rgba(34,197,94,0.2)',
   },
   WARNING: {
-    label: 'WARN',
+    label: '경고',
     color: '#d97706',
     bg: 'rgba(245,158,11,0.08)',
     border: 'rgba(245,158,11,0.2)',
@@ -86,15 +86,15 @@ export default function ParameterTable({ parameters, onParameterClick }: Paramet
       >
         <thead>
           <tr>
-            <StaticTh label="Parameter" />
-            <StaticTh label="Description" />
-            <StaticTh label="Process" />
-            <StaticTh label="Value" />
-            <StaticTh label="Spec" />
+            <StaticTh label="파라미터" />
+            <StaticTh label="설명" />
+            <StaticTh label="공정" />
+            <StaticTh label="값" />
+            <StaticTh label="규격" />
             <StaticTh label="UCL" />
-            <StaticTh label="Target" />
+            <StaticTh label="목표" />
             <StaticTh label="LCL" />
-            <StaticTh label="Status" />
+            <StaticTh label="상태" />
             {onParameterClick && <StaticTh label="" />}
           </tr>
         </thead>
@@ -106,7 +106,7 @@ export default function ParameterTable({ parameters, onParameterClick }: Paramet
                 className="py-10 text-center"
                 style={{ color: 'var(--muted)', fontSize: 13 }}
               >
-                No parameters found
+                파라미터 없음
               </td>
             </tr>
           )}

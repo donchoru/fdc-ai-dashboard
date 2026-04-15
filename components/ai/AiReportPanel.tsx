@@ -21,6 +21,7 @@ function renderMarkdown(text: string, isStreaming: boolean): React.ReactNode {
   let codeBlock: string[] = [];
   let inCodeBlock = false;
   let codeBlockKey = 0;
+  let tableKey = 0;
 
   const renderInline = (line: string, key: string): React.ReactNode => {
     // Split on **bold** markers
@@ -41,7 +42,86 @@ function renderMarkdown(text: string, isStreaming: boolean): React.ReactNode {
     );
   };
 
-  lines.forEach((line, idx) => {
+  /** Parse a |-delimited row into cell strings */
+  const parseTableRow = (line: string): string[] =>
+    line
+      .replace(/^\|/, '')
+      .replace(/\|$/, '')
+      .split('|')
+      .map((c) => c.trim());
+
+  /** Check if a line is a table separator (|---|---|) */
+  const isSeparatorRow = (line: string): boolean =>
+    /^\|?[\s\-:]+(\|[\s\-:]+)+\|?$/.test(line.trim());
+
+  /** Render a collected table block */
+  const renderTable = (tableLines: string[], tKey: number): React.ReactNode => {
+    if (tableLines.length < 2) return null;
+    const headerCells = parseTableRow(tableLines[0]);
+    // skip separator row (index 1)
+    const bodyRows = tableLines.slice(isSeparatorRow(tableLines[1]) ? 2 : 1);
+
+    return (
+      <div
+        key={`table-${tKey}`}
+        className="my-3 overflow-x-auto rounded-lg"
+        style={{ border: '1px solid #e2e8f0' }}
+      >
+        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+          <thead>
+            <tr style={{ background: '#f8fafc' }}>
+              {headerCells.map((cell, ci) => (
+                <th
+                  key={ci}
+                  style={{
+                    padding: '8px 12px',
+                    textAlign: 'left',
+                    fontWeight: 600,
+                    color: '#334155',
+                    borderBottom: '2px solid #e2e8f0',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {renderInline(cell, `th-${tKey}-${ci}`)}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {bodyRows.map((row, ri) => {
+              const cells = parseTableRow(row);
+              return (
+                <tr
+                  key={ri}
+                  style={{
+                    borderBottom: ri < bodyRows.length - 1 ? '1px solid #f1f5f9' : 'none',
+                    background: ri % 2 === 1 ? '#fafbfc' : 'transparent',
+                  }}
+                >
+                  {cells.map((cell, ci) => (
+                    <td
+                      key={ci}
+                      style={{
+                        padding: '6px 12px',
+                        color: '#475569',
+                        lineHeight: 1.5,
+                      }}
+                    >
+                      {renderInline(cell, `td-${tKey}-${ri}-${ci}`)}
+                    </td>
+                  ))}
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    );
+  };
+
+  let idx = 0;
+  while (idx < lines.length) {
+    const line = lines[idx];
     const isLast = idx === lines.length - 1;
 
     // Code block toggle
@@ -66,12 +146,42 @@ function renderMarkdown(text: string, isStreaming: boolean): React.ReactNode {
           </pre>
         );
       }
-      return;
+      idx++;
+      continue;
     }
 
     if (inCodeBlock) {
       codeBlock.push(line);
-      return;
+      idx++;
+      continue;
+    }
+
+    // ── Table detection: line starts with | ──
+    if (line.trimStart().startsWith('|') && line.includes('|', 1)) {
+      const tableLines: string[] = [];
+      while (idx < lines.length && lines[idx].trimStart().startsWith('|')) {
+        tableLines.push(lines[idx]);
+        idx++;
+      }
+      const table = renderTable(tableLines, tableKey++);
+      if (table) nodes.push(table);
+      continue;
+    }
+
+    // # H1 header
+    if (line.startsWith('# ') && !line.startsWith('## ')) {
+      const heading = line.slice(2);
+      nodes.push(
+        <h1
+          key={idx}
+          className="mb-3 mt-5 text-base font-bold"
+          style={{ color: '#1e293b' }}
+        >
+          {renderInline(heading, `h1-inner-${idx}`)}
+        </h1>
+      );
+      idx++;
+      continue;
     }
 
     // ## H2 header
@@ -90,7 +200,8 @@ function renderMarkdown(text: string, isStreaming: boolean): React.ReactNode {
           {renderInline(heading, `h2-inner-${idx}`)}
         </h2>
       );
-      return;
+      idx++;
+      continue;
     }
 
     // ### H3 header
@@ -105,12 +216,29 @@ function renderMarkdown(text: string, isStreaming: boolean): React.ReactNode {
           {renderInline(heading, `h3-inner-${idx}`)}
         </h3>
       );
-      return;
+      idx++;
+      continue;
+    }
+
+    // #### H4 header
+    if (line.startsWith('#### ')) {
+      const heading = line.slice(5);
+      nodes.push(
+        <h4
+          key={idx}
+          className="mb-1 mt-2 text-xs font-semibold"
+          style={{ color: '#64748b' }}
+        >
+          {renderInline(heading, `h4-inner-${idx}`)}
+        </h4>
+      );
+      idx++;
+      continue;
     }
 
     // Bullet points — • or - or *
-    if (/^[•\-\*]\s/.test(line)) {
-      const bulletText = line.slice(2).trim();
+    if (/^[\s]*[•\-\*]\s/.test(line)) {
+      const bulletText = line.replace(/^[\s]*[•\-\*]\s/, '').trim();
       nodes.push(
         <li
           key={idx}
@@ -124,7 +252,8 @@ function renderMarkdown(text: string, isStreaming: boolean): React.ReactNode {
           {renderInline(bulletText, `li-inner-${idx}`)}
         </li>
       );
-      return;
+      idx++;
+      continue;
     }
 
     // Numbered list  1. 2. etc.
@@ -150,7 +279,8 @@ function renderMarkdown(text: string, isStreaming: boolean): React.ReactNode {
             {renderInline(match[2], `ol-inner-${idx}`)}
           </li>
         );
-        return;
+        idx++;
+        continue;
       }
     }
 
@@ -163,13 +293,15 @@ function renderMarkdown(text: string, isStreaming: boolean): React.ReactNode {
           style={{ borderColor: '#e2e8f0' }}
         />
       );
-      return;
+      idx++;
+      continue;
     }
 
     // Empty line — spacing
     if (line.trim() === '') {
       nodes.push(<div key={idx} className="h-2" />);
-      return;
+      idx++;
+      continue;
     }
 
     // Plain paragraph — add cursor blink on last line while streaming
@@ -183,7 +315,8 @@ function renderMarkdown(text: string, isStreaming: boolean): React.ReactNode {
         {renderInline(line, `p-inner-${idx}`)}
       </p>
     );
-  });
+    idx++;
+  }
 
   return <>{nodes}</>;
 }

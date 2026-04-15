@@ -176,55 +176,55 @@ const ANOMALY_SCENARIOS: AnomalyScenario[] = [
   {
     id: 'SCN-ETCH-001',
     process: 'etch',
-    description: 'Chamber pressure drift causing etch rate non-uniformity',
+    description: '챔버 압력 드리프트로 식각율 불균일 발생',
     affectedParameters: ['chamber_pressure', 'etch_rate', 'etch_uniformity', 'dc_bias'],
     rootCause:
-      'Throttle valve calibration offset — pressure control loop feedback error leads to 8% etch rate increase and CD widening beyond spec',
+      '쓰로틀 밸브 교정 오프셋 — 압력 제어 루프 피드백 오류로 식각율 8% 증가 및 CD 규격 이탈',
     semiReference: 'SEMI E164-0218 §5.3 Drift Detection',
   },
   {
     id: 'SCN-ETCH-002',
     process: 'etch',
-    description: 'Source power oscillation causing plasma instability',
+    description: '소스 파워 진동으로 플라즈마 불안정 발생',
     affectedParameters: ['source_power', 'bias_power', 'etch_rate', 'selectivity'],
     rootCause:
-      'RF match network component degradation — impedance mismatch causes 120Hz power oscillation, reflected power >5% triggers plasma micro-extinguishment events',
+      'RF 매칭 네트워크 부품 열화 — 임피던스 불일치로 120Hz 파워 진동, 반사 파워 >5% 시 플라즈마 미소 소멸 발생',
     semiReference: 'SEMI E164-0218 §6.1 Oscillation Pattern',
   },
   {
     id: 'SCN-CVD-001',
     process: 'cvd',
-    description: 'TEOS flow rate shift causing film thickness non-uniformity',
+    description: 'TEOS 유량 변화로 박막 두께 불균일 발생',
     affectedParameters: ['teos_flow', 'dep_rate', 'thickness_uniformity', 'refractive_index'],
     rootCause:
-      'MFC calibration drift in TEOS delivery line — flow deviation of +12% from setpoint increases deposition rate and degrades within-wafer uniformity from 1.2% to 3.8% (1σ)',
+      'TEOS 공급 라인 MFC 교정 드리프트 — 설정값 대비 +12% 유량 편차로 증착율 증가 및 웨이퍼 내 균일도 1.2%에서 3.8%(1σ)로 악화',
     semiReference: 'SEMI E164-0218 §5.4 Step-Change Detection',
   },
   {
     id: 'SCN-LITHO-001',
     process: 'litho',
-    description: 'Overlay error excursion due to wafer stage thermal drift',
+    description: '웨이퍼 스테이지 열 드리프트로 오버레이 오차 이탈',
     affectedParameters: ['wafer_stage_temp', 'overlay_x', 'overlay_y', 'leveling_error'],
     rootCause:
-      'Wafer stage cooling circuit partial blockage — thermal gradient of 0.15°C causes 2.1nm overlay offset in X-axis exceeding IRDS 2024 budget of ±1.5nm for 5nm node',
+      '웨이퍼 스테이지 냉각 회로 부분 막힘 — 0.15°C 열 구배로 X축 2.1nm 오버레이 오프셋, IRDS 2024 5nm 노드 예산 ±1.5nm 초과',
     semiReference: 'SEMI E164-0218 §5.5 Correlation Analysis',
   },
   {
     id: 'SCN-CMP-001',
     process: 'cmp',
-    description: 'Pad glazing causing removal rate drop and within-wafer non-uniformity',
+    description: '패드 글레이징으로 제거율 저하 및 웨이퍼 내 불균일 발생',
     affectedParameters: ['removal_rate', 'within_wafer_nu', 'pad_temperature', 'pad_life'],
     rootCause:
-      'Conditioner disk wear (life >85%) — pad surface glazing reduces slurry retention, decreasing Cu removal rate by 18% and increasing WIWNU from 3.2% to 6.7% (range/mean)',
+      '컨디셔너 디스크 마모(수명 >85%) — 패드 표면 글레이징으로 슬러리 보유력 저하, Cu 제거율 18% 감소 및 WIWNU 3.2%에서 6.7%(범위/평균)로 악화',
     semiReference: 'SEMI E164-0218 §5.3 Trend/Drift',
   },
   {
     id: 'SCN-DIFF-001',
     process: 'diffusion',
-    description: 'Zone temperature non-uniformity causing oxide thickness gradient',
+    description: 'Zone 온도 불균일로 산화막 두께 구배 발생',
     affectedParameters: ['zone2_temp', 'zone3_temp', 'oxide_thickness', 'uniformity'],
     rootCause:
-      'Heating element partial failure in zone 3 — 4.2°C temperature delta between zone 2 and zone 3 creates 1.8Å oxide thickness gradient across 300mm wafer, exceeding ±0.5Å uniformity spec',
+      'Zone 3 히팅 엘리먼트 부분 고장 — Zone 2와 Zone 3 간 4.2°C 온도 편차로 300mm 웨이퍼 전체 1.8Å 산화막 두께 구배, ±0.5Å 균일도 규격 초과',
     semiReference: 'SEMI E164-0218 §5.3 Gradient Detection',
   },
 ];
