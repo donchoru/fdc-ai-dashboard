@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import ProcessFilter from '@/components/filters/ProcessFilter';
 import KpiCard from '@/components/cards/KpiCard';
@@ -306,9 +307,12 @@ function LoadingSkeleton() {
   );
 }
 
-// ─── Page ─────────────────────────────────────────────────────────────────────
+// ─── Alarms Content ───────────────────────────────────────────────────────────
 
-export default function AlarmsPage() {
+function AlarmsContent() {
+  const searchParams = useSearchParams();
+  const urlScenario = searchParams.get('scenario') || 'normal';
+
   const [process, setProcess] = useState<ProcessType | 'all'>('all');
   const [severityFilter, setSeverityFilter] = useState<Severity | 'ALL'>('ALL');
   const [equipmentFilter, setEquipmentFilter] = useState<string>('ALL');
@@ -326,16 +330,17 @@ export default function AlarmsPage() {
     try {
       const params = new URLSearchParams();
       params.set('includeSummary', 'true');
+      if (urlScenario !== 'normal') params.set('scenario', urlScenario);
       const res = await fetch(`/api/alarms?${params.toString()}`);
       if (!res.ok) throw new Error(`API error ${res.status}`);
       const json: AlarmApiResponse = await res.json();
       setAlarms(json.alarms);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load alarms');
+      setError(err instanceof Error ? err.message : '알람 데이터를 불러오지 못했습니다');
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [urlScenario]);
 
   // ── Fetch correlations ──
   const fetchCorrelations = useCallback(async () => {
@@ -733,5 +738,14 @@ export default function AlarmsPage() {
         </>
       )}
     </div>
+  );
+}
+
+// ─── Page Export ──────────────────────────────────────────────────────────────
+export default function AlarmsPage() {
+  return (
+    <Suspense fallback={<div className="p-8 text-slate-400 text-sm">로딩 중...</div>}>
+      <AlarmsContent />
+    </Suspense>
   );
 }

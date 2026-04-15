@@ -1,15 +1,18 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { getFdcData, getEquipmentList } from '@/lib/fdc-data';
 import { getAlarmData } from '@/lib/alarm-data';
 import { getSpcData } from '@/lib/spc-data';
 import type { EquipmentStatus, Severity } from '@/lib/types';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
+    const { searchParams } = new URL(request.url);
+    const scenario = searchParams.get('scenario') ?? undefined;
+
     const equipment = getEquipmentList();
-    const fdcParams = getFdcData();
+    const fdcParams = getFdcData(undefined, scenario);
     const alarms = getAlarmData();
-    const spcItems = getSpcData();
+    const spcItems = getSpcData(undefined, scenario);
 
     // Equipment by status
     const equipmentByStatus = equipment.reduce(
