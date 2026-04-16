@@ -16,6 +16,7 @@ import {
   TrendingUp,
   Shield,
   Globe,
+  AlertTriangle,
   ArrowRight,
   Play,
   Pause,
@@ -234,57 +235,57 @@ const TIMELINE_STEPS = [
   {
     step: 1,
     user: '반도체 FDC 데이터를 시각화하고 AI가 분석 리포트를 쓰는 POC 만들어줘',
-    ai: '프로젝트 구조 설계 + SEMI E164 기반 합성 데이터 모델링 + 6개 공정 파라미터 시스템 구축',
+    ai: 'Next.js 16 + Tailwind v4 프로젝트 구조 설계, SEMI E164 기반 6개 공정 합성 데이터 모델링, 12개 API 라우트 설계',
     icon: <Cpu size={16} />,
     label: '아키텍처 설계',
     color: '#6366f1',
   },
   {
     step: 2,
-    user: '라이트 글래스모피즘 스타일로 디자인해줘',
-    ai: '라이트 글래스모피즘 UI/UX 전체 적용 — 사이드바, 헤더, KPI 카드, 장비 그리드까지',
+    user: '라이트 글래스모피즘으로 프리미엄 느낌 나게 해줘',
+    ai: '글래스모피즘 디자인 시스템 구축 — KPI 카드에 SVG 스파크라인, 사이드바 accent bar, 세그먼트 컨트롤, 3단계 elevation 체계',
     icon: <Sparkles size={16} />,
     label: 'UI/UX 디자인',
     color: '#8b5cf6',
   },
   {
     step: 3,
-    user: '설비 상세 페이지에서 파라미터별 Trace 차트 보여줘',
-    ai: 'AR(1) 자기회귀 시계열 생성 + Recharts 기반 실시간 Trace 차트 컴포넌트 개발',
+    user: '설비별 파라미터 Trace 차트랑 SPC 관리도 보여줘',
+    ai: 'AR(1) 자기회귀 시계열 생성기 + Recharts Trace 차트 + SPC 관리도(Cpk·Western Electric Rules) + 23개 컴포넌트 개발',
     icon: <BarChart3 size={16} />,
     label: '실시간 차트',
     color: '#0ea5e9',
   },
   {
     step: 4,
-    user: 'AI가 이상 분석 리포트를 스트리밍으로 생성하게 해줘',
-    ai: 'OpenAI SDK + SSE 스트리밍 통합 — 글자 단위 실시간 리포트 생성, LLM 교체 가능',
+    user: 'AI가 이상 분석 리포트를 실시간으로 생성하게 해줘',
+    ai: 'OpenAI Compatible SDK + SSE 스트리밍 — Gemini·OpenAI·Ollama 교체 가능, 데모 모드 자동 폴백',
     icon: <Bot size={16} />,
     label: 'LLM 스트리밍',
     color: '#10b981',
   },
   {
     step: 5,
-    user: 'SPC 관리도 페이지를 완전히 개선해줘!',
-    ai: 'Cpk 히트맵 + 공정 능력 분석 + Western Electric Rules + AI 분석 리포트 통합',
-    icon: <TrendingUp size={16} />,
-    label: 'SPC 분석',
+    user: '알람 클릭하면 팝업으로 자세한 내용 보여주고, 설비 상세로 이동할 수 있게 해줘',
+    ai: 'Portal 기반 알람 상세 모달 + 설비 상세 페이지 섹션 자동 스크롤(?focus=parameters) 구현',
+    icon: <AlertTriangle size={16} />,
+    label: '알람 상세 + 설비 연동',
     color: '#f59e0b',
   },
   {
     step: 6,
-    user: '한글로 메뉴 안내해줘, 리포트도 한글로!',
-    ai: '전체 UI 한국어화 + AI 프롬프트 한국어 최적화 + 한국 엔지니어링 용어 적용',
+    user: '전부 한글로 바꾸고, AI 분석 결과도 미리 하나 넣어놔',
+    ai: '전체 UI 한국어화 + SEMI 표준 한국어 용어 적용 + 대시보드 AI 분석 프리로드 + 가상 데이터 면책 고지',
     icon: <Globe size={16} />,
-    label: '한국어화',
+    label: '한국어화 + AI 프리로드',
     color: '#ec4899',
   },
   {
     step: 7,
-    user: '폐쇄망 Windows에서도 실행되게 해줘',
-    ai: 'node_modules 포함 오프라인 ZIP 패키지 생성 + Windows bat 실행 스크립트 작성',
+    user: '사내 폐쇄망 Windows에서 실행할 수 있게 만들어줘',
+    ai: 'Google Fonts → 로컬 폰트 전환, Node.js 포터블 포함 standalone 빌드, Windows bat 실행 스크립트, macOS 경로 패치 자동화',
     icon: <Shield size={16} />,
-    label: '오프라인 배포',
+    label: '폐쇄망 배포',
     color: '#64748b',
   },
 ];
@@ -293,13 +294,13 @@ const TIMELINE_STEPS = [
 const TECH_STACK = [
   {
     name: 'Next.js 16 (React 19)',
-    desc: '최신 웹 프레임워크 — SSR·App Router 지원',
+    desc: 'App Router + standalone 빌드로 폐쇄망 배포',
     icon: <Globe size={18} />,
     color: '#6366f1',
   },
   {
-    name: 'Recharts',
-    desc: '산업용 차트 — Trace·SPC·도넛 차트',
+    name: 'Tailwind v4 + Recharts',
+    desc: 'SPC 관리도·Trace 차트·도넛 — 23개 컴포넌트',
     icon: <BarChart3 size={18} />,
     color: '#0ea5e9',
   },
@@ -310,9 +311,9 @@ const TECH_STACK = [
     color: '#10b981',
   },
   {
-    name: 'SSE 스트리밍',
-    desc: '글자 단위 실시간 AI 리포트 생성',
-    icon: <Zap size={18} />,
+    name: 'SEMI E164 합성 데이터',
+    desc: '6개 공정 · 18개 설비 · 100+ 파라미터 시뮬레이션',
+    icon: <Cpu size={18} />,
     color: '#f59e0b',
   },
 ];
@@ -343,7 +344,7 @@ const IMPACT_CARDS = [
   {
     icon: <Shield size={20} />,
     title: '폐쇄망 배포 지원',
-    desc: 'Windows 오프라인 ZIP 패키지 — 인터넷 없는 FAB 환경에서도 즉시 실행.',
+    desc: 'Node.js 포함 44MB ZIP — 인터넷 없는 FAB 환경에서 start.bat 더블클릭으로 즉시 실행.',
     color: '#f59e0b',
     bg: 'rgba(245,158,11,0.06)',
   },
@@ -571,8 +572,7 @@ export default function MakingPage() {
             <p className="text-slate-600 text-base sm:text-lg leading-relaxed mb-6">
               이 대시보드는 개발자가 AI 코딩 어시스턴트{' '}
               <strong className="text-slate-800">Claude Code</strong>와 자연어 대화만으로
-              개발했습니다. 복잡한 반도체 공정 데이터 시각화부터 LLM 스트리밍 리포트까지 —
-              코드를 직접 타이핑하는 대신 <em>대화</em>로 구현했습니다.
+              개발했습니다. 16,000줄의 코드, 8개 페이지, 23개 컴포넌트, 12개 API — 이 모든 것을 코드 타이핑 없이 대화만으로 만들었습니다. 폐쇄망 Windows에서도 바로 실행됩니다.
             </p>
 
             <div className="flex flex-wrap gap-3">
@@ -665,7 +665,7 @@ export default function MakingPage() {
               className="text-2xl sm:text-3xl font-extrabold tracking-tight mb-1"
               style={{ color: '#0ea5e9' }}
             >
-              <CountUp end={8000} suffix="줄+" />
+              <CountUp end={16000} suffix="줄+" />
             </p>
             <p className="text-sm font-semibold text-slate-700">코드량</p>
             <p className="text-xs text-slate-400 mt-1 leading-snug">TypeScript / React</p>
@@ -687,11 +687,11 @@ export default function MakingPage() {
               className="text-2xl sm:text-3xl font-extrabold tracking-tight mb-1"
               style={{ color: '#10b981' }}
             >
-              <CountUp end={6} suffix="개" />
+              <CountUp end={8} suffix="개" />
             </p>
             <p className="text-sm font-semibold text-slate-700">주요 페이지</p>
             <p className="text-xs text-slate-400 mt-1 leading-snug">
-              개요·설비·SPC·알람·AI 리포트·채팅
+              개요·설비목록·설비상세·SPC·알람·AI리포트·채팅·소개
             </p>
           </div>
 
@@ -923,7 +923,7 @@ export default function MakingPage() {
                 LLM 교체 가능 아키텍처
               </p>
               <div className="flex flex-wrap gap-2">
-                {['Gemini 2.0 Flash', 'GPT-4o', 'Ollama (로컬)', 'vLLM (사내)'].map((llm) => (
+                {['Gemini 2.0 Flash', 'GPT-4o', 'Claude', 'Ollama (로컬)', 'vLLM (사내)'].map((llm) => (
                   <span
                     key={llm}
                     className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium"
