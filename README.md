@@ -1,36 +1,211 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# FDC AI Dashboard
 
-## Getting Started
+**반도체 FAB FDC 이상탐지 + 생성형 AI 분석 대시보드**
 
-First, run the development server:
+> 반도체 제조 현장의 FDC(Fault Detection & Classification) 데이터를 실시간으로 시각화하고, 생성형 AI가 이상 원인을 자동 분석하는 통합 모니터링 시스템 POC
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+---
+
+## 1. 프로젝트 개요
+
+### 배경
+반도체 5nm 이하 공정에서는 수백 개의 공정 파라미터를 동시에 모니터링해야 하며, 미세한 드리프트나 이상 패턴이 수율에 직접적인 영향을 미칩니다. 기존 FDC 시스템은 단순 임계값 기반 알람에 그쳐, 복합적인 이상 원인을 파악하기 어렵습니다.
+
+### 목적
+- FDC 데이터의 **직관적 시각화** (KPI, Trace 차트, SPC 관리도)
+- 생성형 AI 기반 **자동 이상 원인 분석** 및 리포트 생성
+- **폐쇄망(Air-gapped) 환경** 지원 — 인터넷 없이 독립 실행 가능
+- 임원/의사결정자 대상 **AI 역량 데모** 용도
+
+### 대상 사용자
+| 역할 | 활용 |
+|------|------|
+| 공정 엔지니어 | 실시간 파라미터 모니터링, SPC 관리도 확인 |
+| 설비 엔지니어 | 알람 상관 분석, 설비별 이력 조회 |
+| 품질 관리자 | Cpk/Ppk 추이 확인, AI 분석 리포트 생성 |
+| FAB 관리자 | 대시보드 KPI 현황 파악, 이상 시나리오 시뮬레이션 |
+
+---
+
+## 2. 핵심 기능
+
+### 2.1 대시보드 Overview
+- **4대 KPI**: 전체 설비 수, 활성 알람, OOS 파라미터, 평균 Cpk
+- **설비 상태 그리드**: 13개 설비 카드 (RUN/IDLE/DOWN/PM 상태 + 알람 배지)
+- **상태 도넛 차트**: 설비 상태 분포, 알람 심각도 분포
+- **이상 시나리오 카드**: 6개 공정별 이상 시나리오 원클릭 시뮬레이션
+
+### 2.2 설비 상세 페이지
+- **Trace 차트**: AR(1) 자기회귀 시계열 기반 파라미터 추이 (80포인트)
+- **파라미터 테이블**: 현재값, 규격(UCL/LCL), 상태(NORMAL/WARNING/OOS) 일괄 조회
+- **SPC 관리도**: X-bar 차트 + Western Electric Rules 8개 규칙 자동 판정
+- **알람 이력**: 해당 설비의 알람 시간순 정렬 + 상세 모달
+
+### 2.3 SPC 관리도 (통계적 공정 관리)
+- **10개 관리 항목**: Gate CD, Overlay X/Y, CMP 균일도, 산화막 두께 등
+- **공정능력지수**: Cp, Cpk, Pp, Ppk 자동 산출 (AIAG SPC Manual 기준)
+- **Western Electric Rules**: Rule 1~8 자동 평가, 위반 시각적 표시
+- **Zone 표시**: ±1σ, ±2σ, ±3σ 구간 색상 구분
+
+### 2.4 알람 관리
+- **20건 알람 데이터**: SEMI E5/PV16 코드 체계 준수
+- **4개 상관 체인**: 인과관계 기반 알람 그룹핑 (예: 압력 드리프트 → 식각율 이탈 → 균일도 불량)
+- **상세 모달**: 알람 클릭 → 측정값/규격/SEMI 참조 확인 → 설비 상세 원클릭 이동
+
+### 2.5 AI 분석 (생성형 AI)
+- **AI 리포트**: 설비/공정 상태를 분석하여 구조화된 보고서 자동 생성 (SSE 스트리밍)
+- **AI 채팅**: 자연어로 FDC 데이터에 대해 질의응답
+- **LLM 교체 가능**: Gemini, OpenAI, Ollama, vLLM 등 OpenAI-compatible API 지원
+- **폐쇄망 대응**: 내부 vLLM/Ollama 서버 주소 입력으로 사내망에서 AI 분석 가능
+
+---
+
+## 3. 시나리오 기반 데모
+
+헤더의 시나리오 셀렉터로 4가지 운영 상황을 시뮬레이션합니다.
+
+### 정상 가동
+| 항목 | 상태 |
+|------|------|
+| 설비 | 13대 전체 RUN |
+| 활성 알람 | 0건 |
+| OOS 파라미터 | 0건 |
+| SPC | 전 항목 관리 상태 (IN_CONTROL) |
+| OEE | 100% |
+
+### 이상 발생
+| 항목 | 상태 |
+|------|------|
+| 설비 | ETCH-001, CVD-001, LITHO-001, CMP-002 → **DOWN** / DIFF-001 → **ENGINEERING** |
+| 활성 알람 | 12건 (CRITICAL 7, WARNING 5) |
+| OOS 파라미터 | 20건+ (UCL/LCL 이탈) |
+| SPC | 5개 항목 OOC (드리프트, 스파이크, 시프트 패턴) |
+| OEE | 62% |
+
+**알람 → 설비 추적 시나리오 예시 (Etch 압력 캐스케이드)**:
+1. 알람 목록에서 `E-PRES-001 챔버 압력 상한 초과` 확인 (ETCH-001, 34.8 mTorr)
+2. 알람 클릭 → 상세 모달에서 측정값/규격 확인
+3. "설비 상세 보기" 클릭 → ETCH-001 상세 페이지로 이동
+4. 파라미터 테이블: `chamber_pressure 34.8 mTorr` **OOS** 빨간색 표시
+5. 연관 파라미터: `etch_rate 541 Å/min` **OOS**, `etch_uniformity 3.2%` **OOS**
+6. SPC 차트: Gate CD 드리프트 패턴 확인 (UCL 초과)
+7. AI 분석 실행 → "쓰로틀 밸브 MFC 교정 드리프트" 원인 분석 리포트 자동 생성
+
+### PM 주기
+| 항목 | 상태 |
+|------|------|
+| 설비 | ETCH-003, CMP-001, PVD-002 → **PM** |
+| 알람 | PM 관련 알림만 표시 |
+
+---
+
+## 4. 기술 스택
+
+| 구분 | 기술 |
+|------|------|
+| 프레임워크 | Next.js 16 (App Router, Turbopack) |
+| UI | Tailwind CSS v4, 라이트 글래스모피즘 디자인 |
+| 차트 | Recharts 3 (Line, Pie, Bar, Reference) |
+| 아이콘 | Lucide React |
+| AI | OpenAI SDK (OpenAI-compatible API) |
+| 폰트 | Inter (로컬 탑재, CDN 불필요) |
+| 빌드 | Standalone output (Node.js 포터블 포함) |
+| 배포 | 폐쇄망 대응 — ZIP 배포, 인터넷 불필요 |
+
+### 데이터 기준
+| 항목 | 출처 |
+|------|------|
+| 장비 스펙 | SEMI E164-0218, ITRS/IRDS 2024 More Moore |
+| SPC | AIAG SPC Manual 4th Ed., Western Electric Rules |
+| 알람 코드 | SEMI E5 / SEMI PV16 체계 |
+| 공정 파라미터 | 5nm FinFET 노드 기준 (IRDS 2024) |
+| 장비 모델 | LAM 2300 Kiyo45, ASML NXE:3600, AMAT Producer SE, TEL Alpha-303i, KLA eDR-7000 |
+
+---
+
+## 5. 시스템 구성
+
+```
+┌─────────────────────────────────────────────────────┐
+│                    사용자 브라우저                      │
+│  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌─────────┐ │
+│  │ 대시보드  │ │ 설비상세  │ │   SPC    │ │  알람   │ │
+│  │ Overview │ │  Trace   │ │ 관리도   │ │  목록   │ │
+│  └────┬─────┘ └────┬─────┘ └────┬─────┘ └────┬────┘ │
+│       │            │            │            │      │
+│  ┌────┴────────────┴────────────┴────────────┴────┐ │
+│  │              Next.js API Routes                 │ │
+│  │  /api/fdc/* │ /api/spc │ /api/alarms │ /api/ai │ │
+│  └──────┬──────────┬──────────┬──────────┬────────┘ │
+│         │          │          │          │          │
+│  ┌──────┴──────────┴──────────┴──┐  ┌────┴────────┐ │
+│  │      합성 데이터 엔진          │  │  LLM API    │ │
+│  │  fdc-data │ spc-data │ alarm  │  │ (교체 가능)  │ │
+│  └───────────────────────────────┘  └─────────────┘ │
+└─────────────────────────────────────────────────────┘
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 페이지 구성 (8개)
+| 페이지 | 경로 | 설명 |
+|--------|------|------|
+| 대시보드 | `/dashboard` | KPI, 설비 그리드, 도넛 차트, 알람 타임라인 |
+| 설비 목록 | `/equipment` | 전체 설비 카드 그리드 |
+| 설비 상세 | `/equipment/[id]` | Trace 차트, 파라미터 테이블, SPC, 알람 이력 |
+| SPC 관리도 | `/spc` | 10개 관리 항목, Cpk 산출, WER 판정 |
+| 알람 | `/alarms` | 알람 목록, 상관 분석 체인 |
+| AI 리포트 | `/reports` | AI 자동 분석 리포트 생성 (SSE 스트리밍) |
+| AI 채팅 | `/chat` | FDC 데이터 기반 자연어 질의응답 |
+| 소개 | `/making` | 프로젝트 개발 과정 소개 |
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 6. 설치 및 실행
 
-## Learn More
+### 폐쇄망 배포 (Windows)
+```
+1. GitHub Releases에서 fdc-ai-dashboard-win.zip 다운로드
+2. 압축 해제
+3. start.bat 더블클릭
+4. 브라우저에서 http://localhost:3020 자동 열림
+```
+- Node.js 포터블 내장 — 별도 설치 불필요
+- 인터넷 연결 불필요 (AI 분석 기능 제외)
+- AI 분석 사용 시: 사이드바 설정에서 LLM API 키 입력
 
-To learn more about Next.js, take a look at the following resources:
+### 개발 환경
+```bash
+npm install
+npm run dev    # → http://localhost:3020
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 7. 프로젝트 규모
 
-## Deploy on Vercel
+| 항목 | 수치 |
+|------|------|
+| 소스 코드 | ~16,000줄 (TypeScript/TSX) |
+| 페이지 | 8개 |
+| 컴포넌트 | 25개+ |
+| API 엔드포인트 | 12개 |
+| FDC 파라미터 | 6공정 × 10+ 파라미터 × 13설비 |
+| SPC 관리 항목 | 10개 |
+| 알람 데이터 | 20건 + 4개 상관 체인 |
+| 이상 시나리오 | 6개 공정별 시나리오 |
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 8. 향후 확장 방안
+
+| 단계 | 내용 |
+|------|------|
+| **Phase 1** (현재) | 합성 데이터 기반 POC, 시나리오 시뮬레이션 |
+| **Phase 2** | 실제 FDC 서버 연동 (SECS/GEM, EDA), 실시간 데이터 수집 |
+| **Phase 3** | AI 모델 고도화 — RAG 기반 설비 매뉴얼 참조, 이상 패턴 학습 |
+| **Phase 4** | 멀티 FAB 통합 모니터링, 대시보드 커스터마이징 |
+
+---
+
+## 라이선스
+
+사내 전용 — 무단 배포 금지
