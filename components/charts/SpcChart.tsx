@@ -253,10 +253,10 @@ export default function SpcChart({
           />
 
           {/* OOC violation markers — extra ring */}
-          {data.oocViolations.map((v) =>
+          {data.oocViolations.map((v, i) =>
             v.value !== null ? (
               <ReferenceDot
-                key={`ooc-${v.index}`}
+                key={`ooc-${v.index}-${i}`}
                 x={points[v.index]?.label ?? ''}
                 y={v.value}
                 r={10}

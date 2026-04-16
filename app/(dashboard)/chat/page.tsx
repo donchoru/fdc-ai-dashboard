@@ -275,13 +275,15 @@ export default function ChatPage() {
 
       const reader = response.body!.getReader();
       const decoder = new TextDecoder();
+      let buffer = '';
 
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
 
-        const text = decoder.decode(value, { stream: true });
-        const lines = text.split('\n');
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop() ?? '';
 
         for (const line of lines) {
           if (!line.startsWith('data: ')) continue;
@@ -363,7 +365,7 @@ export default function ChatPage() {
             </div>
             <div>
               <h1 className="text-2xl font-bold tracking-tight text-slate-900">
-                Ask AI — FDC Assistant
+                AI 질문 — FDC 어시스턴트
               </h1>
               <p
                 className="mt-1 text-sm leading-relaxed"

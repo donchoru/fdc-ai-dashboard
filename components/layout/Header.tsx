@@ -98,7 +98,7 @@ export default function Header({ onMenuToggle }: HeaderProps) {
 
   return (
     <header
-      className="sticky top-0 z-20 bg-white/80 backdrop-blur-md"
+      className="sticky top-0 z-20 bg-white/85 backdrop-blur-md"
       style={{ borderBottom: '1px solid rgba(226,232,240,0.6)' }}
     >
       <div className="flex items-center gap-3 px-4 sm:px-6 h-14">
@@ -133,7 +133,7 @@ export default function Header({ onMenuToggle }: HeaderProps) {
         <nav className="flex items-center gap-1.5 text-sm min-w-0" aria-label="Breadcrumb">
           <Link
             href="/dashboard"
-            className="text-slate-400 hover:text-indigo-600 transition-colors shrink-0"
+            className="text-slate-400 hover:text-indigo-600 transition-colors shrink-0 font-medium"
           >
             FDC AI
           </Link>
@@ -164,35 +164,71 @@ export default function Header({ onMenuToggle }: HeaderProps) {
         {/* Spacer */}
         <div className="flex-1" aria-hidden="true" />
 
-        {/* Scenario selector */}
-        <div className="hidden sm:flex items-center gap-2">
-          <label htmlFor="scenario-select" className="text-slate-500 text-xs font-medium shrink-0">
-            시나리오
-          </label>
-          <select
-            id="scenario-select"
-            value={scenario}
-            onChange={(e) => handleScenarioChange(e.target.value)}
-            className="glass-input px-2.5 py-1.5 text-xs text-slate-700 pr-7 appearance-none cursor-pointer"
-            style={{ backgroundImage: 'none' }}
-            aria-label="모니터링 시나리오 선택"
-          >
-            {SCENARIOS.map((s) => (
-              <option key={s.value} value={s.value}>
-                {s.label}
-              </option>
-            ))}
-          </select>
+        {/* Scenario segment control */}
+        <div className="hidden md:block segment-control" role="radiogroup" aria-label="모니터링 시나리오">
+          {SCENARIOS.map((s) => (
+            <button
+              key={s.value}
+              role="radio"
+              aria-checked={scenario === s.value}
+              className={scenario === s.value ? 'segment-active' : ''}
+              onClick={() => handleScenarioChange(s.value)}
+            >
+              {s.label}
+            </button>
+          ))}
         </div>
 
-        {/* Live indicator + clock */}
+        {/* Mobile scenario fallback */}
+        <select
+          value={scenario}
+          onChange={(e) => handleScenarioChange(e.target.value)}
+          className="md:hidden glass-input px-2 py-1 text-xs text-slate-700 appearance-none cursor-pointer"
+          aria-label="모니터링 시나리오 선택"
+        >
+          {SCENARIOS.map((s) => (
+            <option key={s.value} value={s.value}>{s.label}</option>
+          ))}
+        </select>
+
+        {/* Notification bell */}
+        <button
+          className="relative p-2 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+          aria-label="알림 3건"
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+            <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+          </svg>
+          {/* Badge count */}
+          <span
+            className="absolute -top-0.5 -right-0.5 flex items-center justify-center w-4 h-4 rounded-full text-[9px] font-bold text-white"
+            style={{ background: '#ef4444', boxShadow: '0 0 0 2px white' }}
+          >
+            3
+          </span>
+        </button>
+
+        {/* Live indicator chip + clock */}
         <div className="flex items-center gap-2 shrink-0">
           <span
-            className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-green-50 border border-green-200"
+            className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full"
+            style={{
+              background: 'linear-gradient(135deg, rgba(34,197,94,0.06), rgba(16,185,129,0.08))',
+              border: '1px solid rgba(34,197,94,0.2)',
+            }}
             aria-label="실시간 모니터링 활성"
           >
-            <span className="status-dot run" aria-hidden="true" />
-            <span className="text-green-700 text-[11px] font-medium">실시간</span>
+            <span
+              className="w-1.5 h-1.5 rounded-full"
+              style={{
+                background: '#22c55e',
+                boxShadow: '0 0 4px rgba(34,197,94,0.6)',
+                animation: 'pulse-green 2s ease-in-out infinite',
+              }}
+              aria-hidden="true"
+            />
+            <span className="text-green-700 text-[10px] font-bold tracking-wider uppercase">Live</span>
           </span>
           <time
             className="text-slate-400 text-xs font-mono tabular-nums"

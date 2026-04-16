@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "GEMINI_API_KEY=$(security find-generic-password -s GEMINI_API_KEY -w 2>/dev/null) next dev --no-turbopack --port 3020",
     "build": "next build",
-    "start": "next start",
+    "start": "GEMINI_API_KEY=$(security find-generic-password -s GEMINI_API_KEY -w 2>/dev/null) next start --port 3020",
     "lint": "eslint"
   },
   "dependencies": {

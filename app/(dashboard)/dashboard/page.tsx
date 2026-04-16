@@ -59,6 +59,45 @@ function Skeleton({ className = '' }: { className?: string }) {
   return <div className={`rounded-lg animate-pulse ${className}`} style={{ background: '#f1f5f9' }} />;
 }
 
+// ─── Pre-written AI analysis (shown on initial load) ────────────────
+const PRELOADED_AI_ANALYSIS = `## 이상 분석 요약
+
+**SCN-ETCH-001 — 챔버 압력 드리프트로 식각율 불균일 발생**
+
+### 탐지된 이상 패턴
+
+| 파라미터 | 현재값 | 규격 | 상태 |
+|----------|--------|------|------|
+| chamber_pressure | 34.8 mTorr | 30 ± 3 mTorr | OOS |
+| etch_rate | 541 Å/min | 500 ± 25 Å/min | OOS |
+| etch_uniformity | 3.2% | < 2.0% | OOS |
+| dc_bias | -165 V | -180 ± 20 V | WARNING |
+
+### 근본 원인 분석 (Root Cause Analysis)
+
+**쓰로틀 밸브 교정 오프셋**이 주요 원인으로 판단됩니다.
+
+1. 쓰로틀 밸브의 위치 피드백 센서 드리프트로 인해 실제 밸브 개도가 설정값보다 약 12% 높게 유지됨
+2. 이로 인한 챔버 압력 상승(30→34.8 mTorr)이 플라즈마 밀도를 변화시킴
+3. 이온 평균 자유 경로(mean free path) 감소로 식각율이 8% 증가하고 균일도가 악화됨
+4. DC 바이어스 전압 변화는 임피던스 매칭 자동 보상의 간접 효과
+
+### 영향도 평가
+
+- **수율 영향**: CD(Critical Dimension) 규격 이탈 예상 — 영향 웨이퍼 약 12매/로트 추정
+- **확산 위험**: 현재 ETCH-001 단독 이상, 인접 장비(ETCH-002, ETCH-003) 정상
+- **심각도**: **Critical** — 즉시 조치 필요
+
+### 권장 조치
+
+1. **즉시**: ETCH-001 가동 중단 후 쓰로틀 밸브 교정(Calibration) 수행
+2. **단기**: 쓰로틀 밸브 위치 센서 교체 또는 재교정 (예상 소요: 4시간)
+3. **장기**: PM 주기에 쓰로틀 밸브 교정 검증 항목 추가 (SEMI E164 §5.3 기준)
+
+---
+
+*SEMI E164-0218 §5.3 Drift Detection 기준 분석 | 자동 생성 리포트*`;
+
 // ─── Dashboard Content ──────────────────────────────────────────────
 function DashboardContent() {
   const router = useRouter();
@@ -73,11 +112,12 @@ function DashboardContent() {
   const [oosMap, setOosMap] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(true);
 
-  // AI
-  const [aiContent, setAiContent] = useState('');
+  // AI — pre-populated with sample analysis
+  const [aiContent, setAiContent] = useState(PRELOADED_AI_ANALYSIS);
   const [aiStreaming, setAiStreaming] = useState(false);
   const [aiError, setAiError] = useState<string | null>(null);
   const [activeScenario, setActiveScenario] = useState<AnomalyScenario | null>(null);
+  const [aiPreloaded, setAiPreloaded] = useState(true);
 
   useEffect(() => {
     async function load() {
@@ -131,6 +171,7 @@ function DashboardContent() {
     setAiContent('');
     setAiError(null);
     setAiStreaming(true);
+    setAiPreloaded(false);
 
     try {
       const res = await fetch('/api/ai/analyze', {
@@ -225,9 +266,9 @@ function DashboardContent() {
       {/* KPI Cards */}
       <section>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <KpiCard icon="⚙️" label="전체 설비" value={kpiData?.totalEquipment ?? 0} color="#6366f1" />
+          <KpiCard icon="settings" label="전체 설비" value={kpiData?.totalEquipment ?? 0} color="#6366f1" />
           <KpiCard
-            icon="🚨"
+            icon="alarm"
             label="활성 알람"
             value={kpiData?.activeAlarms ?? 0}
             color={(kpiData?.activeAlarms ?? 0) > 5 ? '#ef4444' : '#f59e0b'}
@@ -235,13 +276,13 @@ function DashboardContent() {
             trendValue={`${kpiData?.activeAlarms ?? 0} 활성`}
           />
           <KpiCard
-            icon="📊"
+            icon="chart"
             label="OOS 파라미터"
             value={kpiData?.oosParameters ?? 0}
             color={(kpiData?.oosParameters ?? 0) > 0 ? '#ef4444' : '#22c55e'}
           />
           <KpiCard
-            icon="📈"
+            icon="trend"
             label="평균 Cpk"
             value={kpiData?.avgCpk?.toFixed(2) ?? '—'}
             color={cpkColor}
@@ -252,10 +293,7 @@ function DashboardContent() {
 
       {/* Equipment Grid */}
       <section>
-        <h2 className="text-base font-semibold text-slate-800 mb-4 flex items-center gap-2">
-          <span className="w-1 h-5 rounded-full bg-indigo-500" />
-          설비 현황
-        </h2>
+        <h2 className="section-title mb-4">설비 현황</h2>
         {Object.entries(byLine).sort(([a], [b]) => a.localeCompare(b)).map(([line, eqs]) => (
           <div key={line} className="mb-6">
             <div className="flex items-center gap-2 mb-3">
@@ -282,42 +320,71 @@ function DashboardContent() {
       {/* Donut Charts */}
       <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <GlassCard solid className="p-5">
-          <h3 className="text-sm font-semibold text-slate-800 mb-4">설비 상태</h3>
+          <h3 className="section-title mb-4" style={{ fontSize: '0.8125rem' }}>설비 상태</h3>
           <div className="flex items-center gap-6 flex-wrap">
             <StatusDonut data={equipDonut} size={160} centerLabel="설비" centerValue={kpiData?.totalEquipment} />
-            <div className="flex flex-col gap-2 flex-1">
-              {equipDonut.map(d => (
-                <div key={d.name} className="flex items-center justify-between text-xs">
-                  <div className="flex items-center gap-2">
-                    <span className="w-2.5 h-2.5 rounded-full" style={{ background: d.color }} />
-                    <span className="text-slate-500">{d.name}</span>
+            <div className="flex flex-col gap-3 flex-1">
+              {equipDonut.map(d => {
+                const total = equipDonut.reduce((s, x) => s + x.value, 0);
+                const pct = total > 0 ? (d.value / total) * 100 : 0;
+                return (
+                  <div key={d.name}>
+                    <div className="flex items-center justify-between text-xs mb-1">
+                      <div className="flex items-center gap-2">
+                        <span className="w-2 h-2 rounded-full" style={{ background: d.color }} />
+                        <span className="text-slate-600 font-medium">{d.name}</span>
+                      </div>
+                      <span className="font-bold tabular-nums" style={{ color: d.color }}>{d.value}</span>
+                    </div>
+                    <div className="legend-progress">
+                      <div className="legend-progress-fill" style={{ width: `${pct}%`, background: d.color }} />
+                    </div>
                   </div>
-                  <span className="font-semibold" style={{ color: d.color }}>{d.value}</span>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </GlassCard>
         <GlassCard solid className="p-5">
-          <h3 className="text-sm font-semibold text-slate-800 mb-4">알람 심각도</h3>
+          <h3 className="section-title mb-4" style={{ fontSize: '0.8125rem' }}>알람 심각도</h3>
           <div className="flex items-center gap-6 flex-wrap">
             <StatusDonut data={alarmDonut} size={160} centerLabel="알람" centerValue={kpiData?.activeAlarms} />
-            <div className="flex flex-col gap-2 flex-1">
-              {alarmDonut.map(d => (
-                <div key={d.name} className="flex items-center justify-between text-xs">
-                  <div className="flex items-center gap-2">
-                    <span className="w-2.5 h-2.5 rounded-full" style={{ background: d.color }} />
-                    <span className="text-slate-500">{d.name}</span>
+            <div className="flex flex-col gap-3 flex-1">
+              {alarmDonut.map(d => {
+                const total = alarmDonut.reduce((s, x) => s + x.value, 0);
+                const pct = total > 0 ? (d.value / total) * 100 : 0;
+                return (
+                  <div key={d.name}>
+                    <div className="flex items-center justify-between text-xs mb-1">
+                      <div className="flex items-center gap-2">
+                        <span className="w-2 h-2 rounded-full" style={{ background: d.color }} />
+                        <span className="text-slate-600 font-medium">{d.name}</span>
+                      </div>
+                      <span className="font-bold tabular-nums" style={{ color: d.color }}>{d.value}</span>
+                    </div>
+                    <div className="legend-progress">
+                      <div className="legend-progress-fill" style={{ width: `${pct}%`, background: d.color }} />
+                    </div>
                   </div>
-                  <span className="font-semibold" style={{ color: d.color }}>{d.value}</span>
-                </div>
-              ))}
+                );
+              })}
               {kpiData?.oee !== undefined && (
-                <div className="mt-2 pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
-                  <span className="text-slate-400">OEE</span>
-                  <span className="font-bold" style={{ color: kpiData.oee >= 80 ? '#22c55e' : kpiData.oee >= 60 ? '#f59e0b' : '#ef4444' }}>
-                    {kpiData.oee}%
-                  </span>
+                <div className="mt-1 pt-2 border-t border-slate-100">
+                  <div className="flex items-center justify-between text-xs mb-1">
+                    <span className="text-slate-500 font-medium">OEE</span>
+                    <span className="font-bold" style={{ color: kpiData.oee >= 80 ? '#22c55e' : kpiData.oee >= 60 ? '#f59e0b' : '#ef4444' }}>
+                      {kpiData.oee}%
+                    </span>
+                  </div>
+                  <div className="legend-progress">
+                    <div
+                      className="legend-progress-fill"
+                      style={{
+                        width: `${kpiData.oee}%`,
+                        background: kpiData.oee >= 80 ? '#22c55e' : kpiData.oee >= 60 ? '#f59e0b' : '#ef4444',
+                      }}
+                    />
+                  </div>
                 </div>
               )}
             </div>
@@ -327,17 +394,16 @@ function DashboardContent() {
 
       {/* Anomaly Scenarios */}
       <section>
-        <h2 className="text-base font-semibold text-slate-800 mb-4 flex items-center gap-2">
-          <span className="w-1 h-5 rounded-full bg-indigo-500" />
+        <h2 className="section-title mb-4">
           이상 시나리오
-          <span className="text-xs text-slate-400 font-normal ml-2">{scenarios.length}개 이상 유형</span>
+          <span className="section-badge">{scenarios.length}개 이상 유형</span>
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
           {scenarios.map(s => {
             const colors: Record<string, string> = { etch: '#f59e0b', cvd: '#6366f1', litho: '#3b82f6', cmp: '#22c55e', pvd: '#8b5cf6', diffusion: '#ef4444' };
             const c = colors[s.process] ?? '#6366f1';
             return (
-              <GlassCard solid key={s.id} className="p-4" style={{ borderLeft: `3px solid ${c}` }}>
+              <GlassCard solid key={s.id} className="p-4 scenario-card-hover" style={{ borderLeft: `3px solid ${c}` }}>
                 <div className="flex items-center gap-2 mb-2">
                   <span className="text-[10px] font-bold px-1.5 py-0.5 rounded uppercase" style={{ background: `${c}15`, color: c, border: `1px solid ${c}30` }}>
                     {s.process}
@@ -364,25 +430,36 @@ function DashboardContent() {
             );
           })}
         </div>
-        {(activeScenario || aiContent || aiStreaming) && (
-          <div className="mt-4">
-            <AiReportPanel
-              title={activeScenario ? `AI 분석: ${activeScenario.description}` : 'AI 분석 리포트'}
-              onGenerate={() => { if (activeScenario) handleAnalyze(activeScenario); }}
-              content={aiContent}
-              isStreaming={aiStreaming}
-              error={aiError}
-            />
-          </div>
-        )}
+        <div className="mt-4">
+          <AiReportPanel
+            title={
+              aiPreloaded
+                ? 'AI 분석: 챔버 압력 드리프트로 식각율 불균일 발생'
+                : activeScenario
+                  ? `AI 분석: ${activeScenario.description}`
+                  : 'AI 분석 리포트'
+            }
+            onGenerate={() => {
+              if (aiPreloaded && scenarios.length > 0) {
+                // 프리로드 상태에서 재생성 → 첫 번째 시나리오로 실제 AI 호출
+                handleAnalyze(scenarios[0]);
+              } else if (activeScenario) {
+                handleAnalyze(activeScenario);
+              }
+            }}
+            content={aiContent}
+            isStreaming={aiStreaming}
+            error={aiError}
+          />
+        </div>
       </section>
 
       {/* Alarm Timeline */}
       <section>
         <GlassCard solid className="p-5">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-sm font-semibold text-slate-800">최근 알람</h2>
-            <a href="/alarms" className="text-xs text-indigo-500 hover:text-indigo-700 font-medium">전체 보기 →</a>
+            <h2 className="section-title" style={{ fontSize: '0.8125rem' }}>최근 알람</h2>
+            <a href="/alarms" className="text-xs text-indigo-500 hover:text-indigo-700 font-semibold transition-colors">전체 보기 →</a>
           </div>
           <AlarmTimeline alarms={alarms} maxItems={10} />
         </GlassCard>

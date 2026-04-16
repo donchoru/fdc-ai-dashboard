@@ -241,7 +241,7 @@ const TIMELINE_STEPS = [
   },
   {
     step: 2,
-    user: 'SHO-Q 스타일 다크 글래스모피즘으로 디자인해줘',
+    user: '라이트 글래스모피즘 스타일로 디자인해줘',
     ai: '라이트 글래스모피즘 UI/UX 전체 적용 — 사이드바, 헤더, KPI 카드, 장비 그리드까지',
     icon: <Sparkles size={16} />,
     label: 'UI/UX 디자인',

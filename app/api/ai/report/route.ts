@@ -155,7 +155,7 @@ export async function POST(req: Request) {
               { role: 'system', content: REPORT_SYSTEM_PROMPT },
               { role: 'user', content: userMessage },
             ],
-            max_tokens: config.maxTokens,
+            max_tokens: 8192,
             temperature: 0.2, // Low temperature for consistent report format
             stream: true,
           });

@@ -147,13 +147,21 @@ function NavLink({
       href={href}
       onClick={onClick}
       className={[
-        'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150',
+        'relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150',
         isActive
-          ? 'bg-indigo-50 text-indigo-700 border border-indigo-100'
+          ? 'bg-indigo-50/80 text-indigo-700 border border-indigo-100'
           : 'text-slate-500 hover:text-slate-800 hover:bg-slate-50',
       ].join(' ')}
       aria-current={isActive ? 'page' : undefined}
     >
+      {/* Active accent bar */}
+      {isActive && (
+        <span
+          className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-r-full"
+          style={{ background: 'linear-gradient(180deg, #6366f1, #818cf8)' }}
+          aria-hidden="true"
+        />
+      )}
       <span className={isActive ? 'text-indigo-600' : 'text-slate-400'}>{icon}</span>
       <span className="flex-1">{label}</span>
       {badge != null && badge > 0 && (
@@ -162,6 +170,36 @@ function NavLink({
         </span>
       )}
     </Link>
+  );
+}
+
+/* ─── System Status Strip ─────────────────────────────────────────────── */
+function SystemStatusStrip() {
+  return (
+    <div className="mx-4 mt-4 px-3 py-2.5 rounded-lg bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200">
+      <div className="flex items-center gap-2 mb-2">
+        <span className="status-dot run" aria-hidden="true" />
+        <span className="text-green-700 text-xs font-semibold">전체 시스템 정상</span>
+      </div>
+      <div className="grid grid-cols-2 gap-x-3 gap-y-1">
+        <div className="flex items-center justify-between">
+          <span className="text-[10px] text-green-600/70">가동률</span>
+          <span className="text-[10px] font-bold text-green-700">96.2%</span>
+        </div>
+        <div className="flex items-center justify-between">
+          <span className="text-[10px] text-green-600/70">활성 알람</span>
+          <span className="text-[10px] font-bold text-green-700">3건</span>
+        </div>
+        <div className="flex items-center justify-between">
+          <span className="text-[10px] text-green-600/70">OOS</span>
+          <span className="text-[10px] font-bold text-green-700">2건</span>
+        </div>
+        <div className="flex items-center justify-between">
+          <span className="text-[10px] text-green-600/70">Cpk 평균</span>
+          <span className="text-[10px] font-bold text-green-700">1.45</span>
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -196,7 +234,7 @@ export default function Sidebar({ isOpen, onClose, onSettingsOpen }: SidebarProp
       <aside
         className={[
           'fixed top-0 left-0 z-40 h-full flex flex-col',
-          'bg-white border-r border-slate-200',
+          'bg-white/95 backdrop-blur-sm border-r border-slate-200',
           'transition-transform duration-300 ease-in-out',
           'lg:translate-x-0 lg:static lg:z-auto',
           isOpen ? 'translate-x-0' : '-translate-x-full',
@@ -208,29 +246,38 @@ export default function Sidebar({ isOpen, onClose, onSettingsOpen }: SidebarProp
         <div className="px-5 py-5 border-b border-slate-200">
           <div className="flex items-center gap-3">
             <div
-              className="flex items-center justify-center w-9 h-9 rounded-xl bg-indigo-50 border border-indigo-100"
+              className="flex items-center justify-center w-10 h-10 rounded-xl"
+              style={{
+                background: 'linear-gradient(135deg, #6366f1 0%, #818cf8 100%)',
+                boxShadow: '0 2px 8px rgba(99, 102, 241, 0.3)',
+              }}
               aria-hidden="true"
             >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="M12 2L2 7l10 5 10-5-10-5z" stroke="#6366f1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                <path d="M2 17l10 5 10-5" stroke="#6366f1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                <path d="M2 12l10 5 10-5" stroke="#818cf8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M12 2L2 7l10 5 10-5-10-5z" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M2 17l10 5 10-5" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" opacity="0.7" />
+                <path d="M2 12l10 5 10-5" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" opacity="0.85" />
               </svg>
             </div>
             <div>
-              <p className="text-slate-900 font-semibold text-sm leading-none">FDC AI</p>
-              <p className="text-slate-400 text-[11px] mt-1">반도체 FAB 모니터링</p>
+              <p className="text-slate-900 font-bold text-sm leading-none tracking-tight">FDC AI</p>
+              <p className="text-slate-400 text-[11px] mt-1 font-medium">반도체 FAB 모니터링</p>
             </div>
           </div>
         </div>
 
-        {/* System status strip */}
-        <div className="mx-4 mt-4 px-3 py-2 rounded-lg bg-green-50 border border-green-200">
-          <div className="flex items-center gap-2">
-            <span className="status-dot run" aria-hidden="true" />
-            <span className="text-green-700 text-xs font-medium">전체 시스템 정상</span>
-          </div>
+        {/* Disclaimer — virtual data notice */}
+        <div className="mx-4 mt-3 px-3 py-2 rounded-lg bg-slate-50 border border-slate-200">
+          <p className="text-[10px] text-slate-500 leading-relaxed">
+            <span className="font-semibold text-slate-600">데모용 가상 데이터</span>
+            <br />
+            본 대시보드의 모든 데이터는 시연을 위해 생성된 가상 데이터이며, 특정 기업 · 제품 · 설비와 무관합니다.
+            AI 분석은 합성 데이터를 생성형 AI에 전달하여 생성한 결과로, 실제 팹 환경의 정밀 진단을 대체할 수 없습니다. 프로덕션 적용을 위해서는 실제 장비 데이터 연동 및 분석 모델 고도화가 필요합니다.
+          </p>
         </div>
+
+        {/* System status strip with metrics */}
+        <SystemStatusStrip />
 
         {/* Demo mode indicator */}
         <DemoModeBadge />
@@ -268,10 +315,26 @@ export default function Sidebar({ isOpen, onClose, onSettingsOpen }: SidebarProp
           </button>
         </nav>
 
-        {/* Footer */}
+        {/* Footer — version + Powered by AI */}
         <div className="px-5 py-4 border-t border-slate-200">
-          <p className="text-slate-400 text-[10px]">FDC AI 대시보드 v0.1 POC</p>
-          <p className="text-slate-300 text-[10px] mt-0.5">반도체 FAB 이상탐지</p>
+          <div className="flex items-center justify-between">
+            <p className="text-slate-400 text-[10px] font-medium">FDC AI Dashboard v0.2</p>
+            <span
+              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider"
+              style={{
+                background: 'linear-gradient(135deg, #6366f115, #818cf810)',
+                color: '#6366f1',
+                border: '1px solid #6366f120',
+              }}
+            >
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M12 2a4 4 0 0 0-4 4v2H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2h-2V6a4 4 0 0 0-4-4z" />
+                <circle cx="12" cy="15" r="2" />
+              </svg>
+              AI Powered
+            </span>
+          </div>
+          <p className="text-slate-300 text-[10px] mt-1">Semiconductor FDC Monitoring</p>
         </div>
       </aside>
     </>

@@ -394,6 +394,25 @@ function EquipmentDetailContent({
     if (equipment) fetchSpc();
   }, [equipment, fetchSpc]);
 
+  // ── Focus scroll — ?focus=parameters 등 query param으로 섹션 이동 ──
+  const focusTarget = searchParams.get('focus');
+  useEffect(() => {
+    if (!focusTarget) return;
+    let attempts = 0;
+    const id = setInterval(() => {
+      attempts++;
+      const el = document.getElementById(focusTarget);
+      if (el) {
+        clearInterval(id);
+        const y = el.getBoundingClientRect().top + window.scrollY - 72;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      } else if (attempts >= 30) {
+        clearInterval(id);
+      }
+    }, 200);
+    return () => clearInterval(id);
+  }, [focusTarget]);
+
   // ── AI analyze ────────────────────────────────────────────────────────
   const handleAiAnalyze = useCallback(async () => {
     if (!equipment) return;
@@ -690,7 +709,7 @@ function EquipmentDetailContent({
       )}
 
       {/* ── Parameter Trace Charts ─────────────────────────────────────── */}
-      <section aria-label="FDC Parameter Traces">
+      <section id="parameters" aria-label="FDC Parameter Traces">
         <SectionHeader
           title="FDC 파라미터 추이"
           subtitle="30초 간격 실시간 FDC 추이 — UCL/LCL 관리 한계선"
@@ -767,7 +786,7 @@ function EquipmentDetailContent({
       </section>
 
       {/* ── Parameter Table ────────────────────────────────────────────── */}
-      <section aria-label="Parameter Table">
+      <section id="param-table" aria-label="Parameter Table">
         <SectionHeader
           title="파라미터 요약 테이블"
           subtitle="SEMI E164 규격 기반 전체 FDC 파라미터"
@@ -788,7 +807,7 @@ function EquipmentDetailContent({
 
       {/* ── SPC Charts ────────────────────────────────────────────────── */}
       {equipment && (
-        <section aria-label="SPC Statistical Process Control Charts">
+        <section id="spc" aria-label="SPC Statistical Process Control Charts">
           <SectionHeader
             title={`SPC 관리도 — ${PROCESS_LABELS[equipment.process] ?? equipment.process}`}
             subtitle="AIAG SPC Manual 기반 — Cpk ≥ 1.33 목표"
@@ -834,7 +853,7 @@ function EquipmentDetailContent({
       )}
 
       {/* ── Alarm History ─────────────────────────────────────────────── */}
-      <section aria-label="Alarm History">
+      <section id="alarms" aria-label="Alarm History">
         <SectionHeader
           title="알람 이력"
           subtitle={`${equipmentId} 전체 알람`}

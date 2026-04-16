@@ -7,19 +7,19 @@ const SEVERITY_CONFIG: Record<
   { label: string; className: string; ariaLabel: string }
 > = {
   CRITICAL: {
-    label: 'CRITICAL',
+    label: '위험',
     className: 'severity-critical',
-    ariaLabel: 'Severity: Critical',
+    ariaLabel: '심각도: 위험',
   },
   WARNING: {
-    label: 'WARNING',
+    label: '경고',
     className: 'severity-warning',
-    ariaLabel: 'Severity: Warning',
+    ariaLabel: '심각도: 경고',
   },
   INFO: {
-    label: 'INFO',
+    label: '정보',
     className: 'severity-info',
-    ariaLabel: 'Severity: Informational',
+    ariaLabel: '심각도: 정보',
   },
 };
 

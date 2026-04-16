@@ -6,6 +6,7 @@ interface GlassCardProps {
   solid?: boolean;
   hover?: boolean;
   onClick?: () => void;
+  style?: React.CSSProperties;
 }
 
 export default function GlassCard({
@@ -14,6 +15,7 @@ export default function GlassCard({
   solid = false,
   hover = false,
   onClick,
+  style,
 }: GlassCardProps) {
   const base = solid ? 'glass-card-solid' : 'glass-card';
   const hoverClass = hover ? 'hover-glow cursor-pointer' : '';
@@ -22,6 +24,7 @@ export default function GlassCard({
   return (
     <div
       className={`${base} ${hoverClass} ${clickable} ${className}`}
+      style={style}
       onClick={onClick}
       role={onClick ? 'button' : undefined}
       tabIndex={onClick ? 0 : undefined}

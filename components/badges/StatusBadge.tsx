@@ -4,19 +4,19 @@ import { EquipmentStatus } from '@/lib/types';
 import { STATUS_COLORS } from '@/lib/constants';
 
 const STATUS_LABELS: Record<EquipmentStatus, string> = {
-  RUN: 'RUN',
-  IDLE: 'IDLE',
-  DOWN: 'DOWN',
+  RUN: '가동',
+  IDLE: '대기',
+  DOWN: '정지',
   PM: 'PM',
   ENGINEERING: 'ENG',
 };
 
 const STATUS_ARIA: Record<EquipmentStatus, string> = {
-  RUN: 'Status: Running',
-  IDLE: 'Status: Idle',
-  DOWN: 'Status: Down',
-  PM: 'Status: Preventive Maintenance',
-  ENGINEERING: 'Status: Engineering Mode',
+  RUN: '상태: 가동',
+  IDLE: '상태: 대기',
+  DOWN: '상태: 정지',
+  PM: '상태: 예방 정비',
+  ENGINEERING: '상태: 엔지니어링',
 };
 
 interface StatusBadgeProps {

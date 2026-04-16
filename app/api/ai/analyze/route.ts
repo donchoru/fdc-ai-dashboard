@@ -78,7 +78,7 @@ export async function POST(req: Request) {
               { role: 'system', content: ANALYSIS_SYSTEM_PROMPT },
               { role: 'user', content: userMessage },
             ],
-            max_tokens: config.maxTokens,
+            max_tokens: 8192,
             temperature: config.temperature,
             stream: true,
           });

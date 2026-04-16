@@ -1261,11 +1261,84 @@ function getDiffusionParameters(scenario?: string): FdcParameter[] {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Expand parameters to all equipment in the same process
+// Base params are tagged with XXX-001; this clones them for XXX-002, XXX-003
+// with deterministic slight value variations so every equipment has data.
+// ─────────────────────────────────────────────────────────────────────────────
+
+function simpleHash(str: string): number {
+  let h = 0;
+  for (let i = 0; i < str.length; i++) {
+    h = ((h << 5) - h + str.charCodeAt(i)) | 0;
+  }
+  return Math.abs(h);
+}
+
+function expandToAllEquipment(params: FdcParameter[]): FdcParameter[] {
+  const result: FdcParameter[] = [];
+
+  // Group by process
+  const byProcess = new Map<string, FdcParameter[]>();
+  for (const p of params) {
+    const group = byProcess.get(p.process) ?? [];
+    group.push(p);
+    byProcess.set(p.process, group);
+  }
+
+  for (const [proc, processParams] of byProcess) {
+    const allEquip = EQUIPMENT_REGISTRY.filter((e) => e.process === proc);
+    const existingEqIds = new Set(processParams.map((p) => p.equipmentId));
+
+    // Keep originals
+    result.push(...processParams);
+
+    // Clone for equipment that doesn't have params yet
+    for (const eq of allEquip) {
+      if (existingEqIds.has(eq.equipmentId)) continue;
+
+      for (const base of processParams) {
+        const seed = simpleHash(eq.equipmentId + base.parameter);
+        // ±2% deterministic variation
+        const offset = ((seed % 41) - 20) / 1000; // -0.020 ~ +0.020
+        let newValue = base.value;
+        if (typeof newValue === 'number' && newValue !== 0) {
+          newValue = Math.round(newValue * (1 + offset) * 100) / 100;
+        }
+
+        // Determine status based on new value vs limits
+        let newStatus = base.status;
+        if (typeof newValue === 'number') {
+          if (newValue > base.ucl || newValue < base.lcl) {
+            newStatus = 'OOS';
+          } else if (
+            newValue > base.target + (base.ucl - base.target) * 0.75 ||
+            newValue < base.target - (base.target - base.lcl) * 0.75
+          ) {
+            newStatus = 'WARNING';
+          } else {
+            newStatus = 'NORMAL';
+          }
+        }
+
+        result.push({
+          ...base,
+          equipmentId: eq.equipmentId,
+          value: newValue,
+          status: newStatus,
+        });
+      }
+    }
+  }
+
+  return result;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Public API
 // ─────────────────────────────────────────────────────────────────────────────
 
 export function getFdcData(process?: ProcessType, scenario?: string): FdcParameter[] {
-  const all: FdcParameter[] = [
+  const base: FdcParameter[] = [
     ...getEtchParameters(scenario),
     ...getCvdParameters(scenario),
     ...getLithoParameters(scenario),
@@ -1273,6 +1346,7 @@ export function getFdcData(process?: ProcessType, scenario?: string): FdcParamet
     ...getPvdParameters(),
     ...getDiffusionParameters(scenario),
   ];
+  const all = expandToAllEquipment(base);
   if (!process) return all;
   return all.filter((p) => p.process === process);
 }
