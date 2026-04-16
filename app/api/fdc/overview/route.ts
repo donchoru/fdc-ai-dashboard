@@ -9,9 +9,9 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const scenario = searchParams.get('scenario') ?? undefined;
 
-    const equipment = getEquipmentList();
+    const equipment = getEquipmentList(scenario);
     const fdcParams = getFdcData(undefined, scenario);
-    const alarms = getAlarmData();
+    const alarms = getAlarmData({ scenario });
     const spcItems = getSpcData(undefined, scenario);
 
     // Equipment by status

@@ -14,8 +14,7 @@ export async function GET(request: NextRequest) {
     const status = searchParams.get('status') as AlarmStatus | null;
     const limitParam = searchParams.get('limit');
     const includeSummary = searchParams.get('includeSummary') === 'true';
-    // scenario param accepted — alarm data is static but param is forwarded for consistency
-    // const scenario = searchParams.get('scenario') ?? undefined;
+    const scenario = searchParams.get('scenario') ?? undefined;
 
     // Validate severity
     if (severity && !VALID_SEVERITIES.includes(severity)) {
@@ -47,6 +46,7 @@ export async function GET(request: NextRequest) {
       equipmentId: equipmentId ?? undefined,
       process: process ?? undefined,
       status: status ?? undefined,
+      scenario,
     });
 
     // Sort by timestamp descending (most recent first)

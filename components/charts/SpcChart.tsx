@@ -25,15 +25,18 @@ interface DataPoint {
   label: string;
   value: number;
   isOoc: boolean;
+  oocRule?: number;
 }
 
 function buildDataPoints(data: SpcItem): DataPoint[] {
-  const oocIndices = new Set(data.oocViolations.map((v) => v.index));
+  const oocMap = new Map<number, number>();
+  data.oocViolations.forEach((v) => oocMap.set(v.index, v.rule));
   return data.recentValues.map((value, i) => ({
     index: i,
     label: `#${i + 1}`,
     value,
-    isOoc: oocIndices.has(i),
+    isOoc: oocMap.has(i),
+    oocRule: oocMap.get(i),
   }));
 }
 
@@ -62,8 +65,8 @@ function CustomTooltip({ active, payload }: any) {
         {p.value.toFixed(4)}
       </p>
       {p.isOoc && (
-        <p style={{ color: '#ef4444', fontSize: 10, marginTop: 4, fontWeight: 700 }}>
-          관리 이탈
+        <p style={{ color: p.oocRule === 1 ? '#ef4444' : '#f59e0b', fontSize: 10, marginTop: 4, fontWeight: 700 }}>
+          {p.oocRule === 1 ? '관리 이탈 (±3σ 초과)' : `패턴 이상 (Rule ${p.oocRule})`}
         </p>
       )}
     </div>

@@ -48,8 +48,8 @@ mkdir -p "$RELEASE_DIR/$PACKAGE_NAME"
 
 DEST="$RELEASE_DIR/$PACKAGE_NAME"
 
-# standalone 서버 복사
-cp -r .next/standalone/* "$DEST/"
+# standalone 서버 복사 (숨김 폴더 .next 포함)
+cp -r .next/standalone/. "$DEST/"
 
 # static 파일 복사 (standalone에는 포함 안 됨)
 mkdir -p "$DEST/.next/static"
@@ -60,8 +60,23 @@ if [ -d "public" ]; then
     cp -r public "$DEST/public"
 fi
 
-# 실행 스크립트 복사
-cp scripts/start.bat "$DEST/start.bat"
+# 실행 스크립트 복사 (LF → CRLF 변환 — Windows cmd.exe 필수)
+if command -v unix2dos &> /dev/null; then
+    unix2dos -n scripts/start.bat "$DEST/start.bat" 2>/dev/null
+else
+    sed 's/$/\r/' scripts/start.bat > "$DEST/start.bat"
+fi
+
+# ── server.js 내 macOS 절대 경로 제거 ──
+# Next.js standalone이 빌드 머신 경로를 하드코딩하므로 상대 경로로 치환
+echo "  server.js 경로 패치 중..."
+sed -i.bak "s|$PROJECT_DIR|.|g" "$DEST/server.js"
+rm -f "$DEST/server.js.bak"
+# required-server-files.json 도 패치
+if [ -f "$DEST/.next/required-server-files.json" ]; then
+    sed -i.bak "s|$PROJECT_DIR|.|g" "$DEST/.next/required-server-files.json"
+    rm -f "$DEST/.next/required-server-files.json.bak"
+fi
 
 # ── 3. Node.js 포터블 번들링 ──
 echo "[3/5] Node.js 포터블 번들링..."

@@ -356,7 +356,9 @@ function EquipmentDetailContent({
   const fetchAlarms = useCallback(async () => {
     setAlarmsLoading(true);
     try {
-      const res = await fetch(`/api/alarms?equipmentId=${equipmentId}`);
+      const qs = new URLSearchParams({ equipmentId });
+      if (scenario) qs.set('scenario', scenario);
+      const res = await fetch(`/api/alarms?${qs}`);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
       setAlarms(data.alarms ?? []);
@@ -365,7 +367,7 @@ function EquipmentDetailContent({
     } finally {
       setAlarmsLoading(false);
     }
-  }, [equipmentId]);
+  }, [equipmentId, scenario]);
 
   const fetchSpc = useCallback(async () => {
     if (!equipment) return;
@@ -875,7 +877,7 @@ function EquipmentDetailContent({
               이 설비의 알람 이력이 없습니다
             </div>
           ) : (
-            <AlarmTable alarms={alarms} />
+            <AlarmTable alarms={alarms} scenario={scenario} />
           )}
         </GlassCard>
       </section>

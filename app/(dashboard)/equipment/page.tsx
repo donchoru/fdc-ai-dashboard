@@ -126,9 +126,10 @@ function EquipmentContent() {
       setLoading(true);
       try {
         const scenarioParam = scenario !== 'normal' ? `?scenario=${scenario}` : '';
+        const alarmParam = scenario !== 'normal' ? `?scenario=${scenario}` : '';
         const [eqRes, alRes] = await Promise.all([
           fetch(`/api/fdc/equipment${scenarioParam}`),
-          fetch('/api/alarms'),
+          fetch(`/api/alarms${alarmParam}`),
         ]);
         const eqData = await eqRes.json();
         const alData = await alRes.json();

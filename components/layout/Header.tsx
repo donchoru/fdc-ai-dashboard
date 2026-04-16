@@ -19,7 +19,7 @@ interface BreadcrumbItem {
 }
 
 const BREADCRUMB_MAP: Record<string, BreadcrumbItem[]> = {
-  '/dashboard': [{ label: '개요' }],
+  '/dashboard': [{ label: '대시보드' }],
   '/equipment': [{ label: '설비' }],
   '/spc': [{ label: 'SPC 관리도' }],
   '/alarms': [{ label: '알람' }],

@@ -4,6 +4,7 @@ import { PROCESS_LABELS } from './constants';
 // ─────────────────────────────────────────────────────────────────────────────
 // Equipment Registry — SEMI E10 compliant naming, real vendor models
 // ─────────────────────────────────────────────────────────────────────────────
+// ── 기본 설비 목록 (정상 가동 기준 — 전부 RUN 또는 IDLE) ──
 const EQUIPMENT_REGISTRY: Equipment[] = [
   // Etch — LAM Research
   {
@@ -37,7 +38,7 @@ const EQUIPMENT_REGISTRY: Equipment[] = [
     vendor: 'LAM Research',
     line: 'FAB-B',
     process: 'etch',
-    status: 'PM',
+    status: 'RUN',
     chamberCount: 2,
     lastPmDate: '2024-04-10',
     waferCount: 3200,
@@ -62,7 +63,7 @@ const EQUIPMENT_REGISTRY: Equipment[] = [
     vendor: 'Applied Materials',
     line: 'FAB-A',
     process: 'cvd',
-    status: 'IDLE',
+    status: 'RUN',
     chamberCount: 2,
     lastPmDate: '2024-04-02',
     waferCount: 680,
@@ -112,7 +113,7 @@ const EQUIPMENT_REGISTRY: Equipment[] = [
     vendor: 'Applied Materials',
     line: 'FAB-B',
     process: 'cmp',
-    status: 'DOWN',
+    status: 'RUN',
     chamberCount: 3,
     lastPmDate: '2024-03-18',
     waferCount: 5100,
@@ -137,7 +138,7 @@ const EQUIPMENT_REGISTRY: Equipment[] = [
     vendor: 'Applied Materials',
     line: 'FAB-B',
     process: 'pvd',
-    status: 'ENGINEERING',
+    status: 'RUN',
     chamberCount: 5,
     lastPmDate: '2024-03-25',
     waferCount: 2870,
@@ -168,6 +169,24 @@ const EQUIPMENT_REGISTRY: Equipment[] = [
     waferCount: 2140,
   },
 ];
+
+// ── 시나리오별 설비 상태 오버라이드 ──
+// "이상 발생": 알람 발생 설비는 DOWN, 나머지는 정상
+// "PM 주기": 일부 설비 PM 상태
+const SCENARIO_STATUS_OVERRIDES: Record<string, Record<string, EquipmentStatus>> = {
+  incident: {
+    'ETCH-001': 'DOWN',      // 압력 캐스케이드 → 로트 홀드 → DOWN
+    'CVD-001': 'DOWN',       // TEOS 유량 이상 → DOWN
+    'LITHO-001': 'DOWN',     // 오버레이 이탈 → DOWN
+    'CMP-002': 'DOWN',       // 패드 열화 → DOWN
+    'DIFF-001': 'ENGINEERING', // Zone 온도 편차 → 엔지니어링 모드
+  },
+  maintenance: {
+    'ETCH-003': 'PM',
+    'CMP-001': 'PM',
+    'PVD-002': 'PM',
+  },
+};
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Anomaly Scenarios (SEMI E164 referenced failure modes)
@@ -1298,26 +1317,29 @@ function expandToAllEquipment(params: FdcParameter[]): FdcParameter[] {
 
       for (const base of processParams) {
         const seed = simpleHash(eq.equipmentId + base.parameter);
-        // ±2% deterministic variation
-        const offset = ((seed % 41) - 20) / 1000; // -0.020 ~ +0.020
-        let newValue = base.value;
-        if (typeof newValue === 'number' && newValue !== 0) {
-          newValue = Math.round(newValue * (1 + offset) * 100) / 100;
+        const range = base.ucl - base.lcl;
+        const direction = ((seed % 201) - 100) / 100; // -1.0 ~ +1.0
+
+        // 다른 장비는 항상 정상 범위 내에서만 변동
+        const safeMargin = range * 0.3;
+        const maxOffset = Math.min(Math.abs(base.target) * 0.02, safeMargin);
+        let newValue = base.target; // 원본 value가 아닌 target 기준
+        if (typeof newValue === 'number' && maxOffset > 0) {
+          newValue = Math.round((newValue + direction * maxOffset) * 100) / 100;
+          newValue = Math.min(newValue, base.ucl - range * 0.05);
+          newValue = Math.max(newValue, base.lcl + range * 0.05);
+          newValue = Math.round(newValue * 100) / 100;
         }
 
-        // Determine status based on new value vs limits
-        let newStatus = base.status;
-        if (typeof newValue === 'number') {
-          if (newValue > base.ucl || newValue < base.lcl) {
-            newStatus = 'OOS';
-          } else if (
-            newValue > base.target + (base.ucl - base.target) * 0.75 ||
-            newValue < base.target - (base.target - base.lcl) * 0.75
-          ) {
-            newStatus = 'WARNING';
-          } else {
-            newStatus = 'NORMAL';
-          }
+        // 값 기준으로 status 재계산 (값-상태 모순 방지)
+        let newStatus: FdcParameter['status'] = 'NORMAL';
+        if (newValue > base.ucl || newValue < base.lcl) {
+          newStatus = 'OOS';
+        } else if (
+          newValue > base.ucl - range * 0.1 ||
+          newValue < base.lcl + range * 0.1
+        ) {
+          newStatus = 'WARNING';
         }
 
         result.push({
@@ -1337,14 +1359,25 @@ function expandToAllEquipment(params: FdcParameter[]): FdcParameter[] {
 // Public API
 // ─────────────────────────────────────────────────────────────────────────────
 
+// 헤더 시나리오 "incident" → 각 공정별 FDC 이상 시나리오 자동 활성화
+const INCIDENT_SCENARIO_MAP: Record<string, string> = {
+  etch: 'SCN-ETCH-001',
+  cvd: 'SCN-CVD-001',
+  litho: 'SCN-LITHO-001',
+  cmp: 'SCN-CMP-001',
+  diffusion: 'SCN-DIFF-001',
+};
+
 export function getFdcData(process?: ProcessType, scenario?: string): FdcParameter[] {
+  // "incident" 시나리오 → 각 공정별 이상 시나리오 개별 활성화
+  const isIncident = scenario === 'incident';
   const base: FdcParameter[] = [
-    ...getEtchParameters(scenario),
-    ...getCvdParameters(scenario),
-    ...getLithoParameters(scenario),
-    ...getCmpParameters(scenario),
+    ...getEtchParameters(isIncident ? INCIDENT_SCENARIO_MAP.etch : scenario),
+    ...getCvdParameters(isIncident ? INCIDENT_SCENARIO_MAP.cvd : scenario),
+    ...getLithoParameters(isIncident ? INCIDENT_SCENARIO_MAP.litho : scenario),
+    ...getCmpParameters(isIncident ? INCIDENT_SCENARIO_MAP.cmp : scenario),
     ...getPvdParameters(),
-    ...getDiffusionParameters(scenario),
+    ...getDiffusionParameters(isIncident ? INCIDENT_SCENARIO_MAP.diffusion : scenario),
   ];
   const all = expandToAllEquipment(base);
   if (!process) return all;
@@ -1355,12 +1388,18 @@ export function getAnomalyScenarios(): AnomalyScenario[] {
   return ANOMALY_SCENARIOS;
 }
 
-export function getEquipmentList(): Equipment[] {
-  return EQUIPMENT_REGISTRY;
+export function getEquipmentList(scenario?: string): Equipment[] {
+  const overrides = scenario ? SCENARIO_STATUS_OVERRIDES[scenario] : undefined;
+  if (!overrides) return EQUIPMENT_REGISTRY;
+
+  return EQUIPMENT_REGISTRY.map((eq) => {
+    const override = overrides[eq.equipmentId];
+    return override ? { ...eq, status: override } : eq;
+  });
 }
 
-export function getEquipmentByProcess(process: ProcessType): Equipment[] {
-  return EQUIPMENT_REGISTRY.filter((e) => e.process === process);
+export function getEquipmentByProcess(process: ProcessType, scenario?: string): Equipment[] {
+  return getEquipmentList(scenario).filter((e) => e.process === process);
 }
 
 export function getKpiData() {

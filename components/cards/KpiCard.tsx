@@ -19,16 +19,29 @@ const ICON_MAP: Record<string, LucideIcon> = {
 };
 
 /* ─── Mini Sparkline ──────────────────────────────────────────────────── */
+// 결정적 난수 — 서버/클라이언트 동일 값 (hydration mismatch 방지)
+function seededRandom(seed: number): () => number {
+  let s = seed;
+  return () => {
+    s = (s * 1664525 + 1013904223) & 0x7fffffff;
+    return s / 0x7fffffff;
+  };
+}
+
 function MiniSparkline({ color, points = 8 }: { color: string; points?: number }) {
   const data = useMemo(() => {
+    // color를 시드로 사용 — 같은 카드는 항상 같은 차트
+    let seed = 0;
+    for (let i = 0; i < color.length; i++) seed = ((seed << 5) - seed + color.charCodeAt(i)) | 0;
+    const rand = seededRandom(Math.abs(seed));
     const arr: number[] = [];
-    let v = 0.4 + Math.random() * 0.2;
+    let v = 0.4 + rand() * 0.2;
     for (let i = 0; i < points; i++) {
-      v = Math.max(0.1, Math.min(0.95, v + (Math.random() - 0.5) * 0.25));
+      v = Math.max(0.1, Math.min(0.95, v + (rand() - 0.5) * 0.25));
       arr.push(v);
     }
     return arr;
-  }, [points]);
+  }, [points, color]);
 
   const w = 100;
   const h = 24;

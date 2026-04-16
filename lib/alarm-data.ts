@@ -420,10 +420,26 @@ export interface AlarmFilters {
   severity?: Severity;
   status?: AlarmStatus;
   lineId?: string;
+  scenario?: string;
 }
 
 export function getAlarmData(filters?: AlarmFilters): Alarm[] {
   let data = [...ALARM_DATA];
+
+  // 시나리오별 알람 필터링 — 설비 파라미터와 일관성 유지
+  // "정상 가동": ACTIVE CRITICAL/WARNING 알람 숨김 (설비 파라미터가 정상이므로)
+  // "이상 발생": 모든 알람 표시 (설비 파라미터에 이상 반영됨)
+  // "PM 주기": INFO + PM 관련만
+  const scenario = filters?.scenario;
+  if (scenario === 'normal' || scenario === undefined || scenario === '') {
+    // 정상 가동: CLEARED/INFO만 (설비는 멀쩡한데 알람 뜨는 모순 방지)
+    data = data.filter((a) => a.status === 'CLEARED' || a.severity === 'INFO');
+  } else if (scenario === 'maintenance') {
+    // PM 주기: INFO + PM 관련 알람만
+    data = data.filter((a) => a.severity === 'INFO' || a.alarmCode.includes('PM') || a.alarmCode.includes('TRGT'));
+  }
+  // 'incident' / 'rampup': 모든 알람 표시
+
   if (!filters) return data;
 
   if (filters.equipmentId) {
@@ -449,8 +465,8 @@ export function getAlarmCorrelations(equipmentId?: string): AlarmCorrelation[] {
   return ALARM_CORRELATIONS.filter((c) => c.equipmentPattern === equipmentId);
 }
 
-export function getAlarmSummary() {
-  const all = ALARM_DATA;
+export function getAlarmSummary(scenario?: string) {
+  const all = getAlarmData({ scenario });
   const bySeverity = all.reduce(
     (acc, a) => {
       acc[a.severity] = (acc[a.severity] || 0) + 1;

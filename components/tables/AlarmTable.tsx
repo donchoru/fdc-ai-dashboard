@@ -12,6 +12,7 @@ import ProcessBadge from '@/components/badges/ProcessBadge';
 interface AlarmTableProps {
   alarms: Alarm[];
   onAcknowledge?: (id: string) => void;
+  scenario?: string;
 }
 
 type SortKey = 'time' | 'severity';
@@ -80,10 +81,12 @@ function AlarmDetailModal({
   alarm,
   onClose,
   onAcknowledge,
+  scenario,
 }: {
   alarm: Alarm;
   onClose: () => void;
   onAcknowledge?: (id: string) => void;
+  scenario?: string;
 }) {
   const severityColor = SEVERITY_COLORS[alarm.severity];
   const statusStyle = STATUS_STYLES[alarm.status] ?? STATUS_STYLES.CLEARED;
@@ -174,7 +177,7 @@ function AlarmDetailModal({
             <DetailItem
               label="설비"
               value={alarm.equipmentName}
-              link={`/equipment/${alarm.equipmentId}`}
+              link={`/equipment/${alarm.equipmentId}${scenario && scenario !== 'normal' ? `?scenario=${scenario}` : ''}`}
             />
             <DetailItem label="설비 ID" value={alarm.equipmentId} mono />
             <DetailItem label="라인" value={alarm.lineId} />
@@ -207,7 +210,7 @@ function AlarmDetailModal({
           {/* Actions */}
           <div className="flex items-center gap-2 pt-2">
             <Link
-              href={`/equipment/${alarm.equipmentId}?focus=parameters`}
+              href={`/equipment/${alarm.equipmentId}?focus=parameters${scenario && scenario !== 'normal' ? `&scenario=${scenario}` : ''}`}
               className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-semibold text-white transition-colors"
               style={{ background: 'linear-gradient(135deg, #6366f1, #4f46e5)' }}
             >
@@ -283,7 +286,7 @@ function DetailItem({
 }
 
 /* ─── Main Table ──────────────────────────────────────────────────────── */
-export default function AlarmTable({ alarms, onAcknowledge }: AlarmTableProps) {
+export default function AlarmTable({ alarms, onAcknowledge, scenario }: AlarmTableProps) {
   const [sortKey, setSortKey] = useState<SortKey>('severity');
   const [sortDir, setSortDir] = useState<SortDir>('asc');
   const [selectedAlarm, setSelectedAlarm] = useState<Alarm | null>(null);
@@ -506,6 +509,7 @@ export default function AlarmTable({ alarms, onAcknowledge }: AlarmTableProps) {
           alarm={selectedAlarm}
           onClose={() => setSelectedAlarm(null)}
           onAcknowledge={onAcknowledge}
+          scenario={scenario}
         />,
         document.body
       )}

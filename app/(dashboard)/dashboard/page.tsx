@@ -124,12 +124,13 @@ function DashboardContent() {
       setLoading(true);
       try {
         const scenarioParam = scenario !== 'normal' ? `?scenario=${scenario}` : '';
+        const alarmScenarioParam = scenario !== 'normal' ? `&scenario=${scenario}` : '';
         const [kpiRes, eqRes, alRes, scRes, allAlRes, paramRes] = await Promise.all([
           fetch(`/api/fdc/overview${scenarioParam}`),
-          fetch(`/api/fdc/equipment`),
-          fetch(`/api/alarms?limit=10`),
+          fetch(`/api/fdc/equipment${scenarioParam}`),
+          fetch(`/api/alarms?limit=10${alarmScenarioParam}`),
           fetch('/api/fdc/anomalies'),
-          fetch('/api/alarms'),
+          fetch(`/api/alarms?includeSummary=true${alarmScenarioParam}`),
           fetch(`/api/fdc/parameters${scenarioParam}`),
         ]);
 

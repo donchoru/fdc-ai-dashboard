@@ -702,6 +702,7 @@ function AlarmsContent() {
                   <AlarmTable
                     alarms={filteredAlarms}
                     onAcknowledge={handleAcknowledge}
+                    scenario={urlScenario}
                   />
                 )}
               </GlassCard>

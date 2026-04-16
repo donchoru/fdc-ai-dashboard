@@ -9,8 +9,7 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const line = searchParams.get('line');
     const process = searchParams.get('process') as ProcessType | null;
-    // scenario param accepted for future use — equipment list is static for now
-    // const scenario = searchParams.get('scenario') ?? undefined;
+    const scenario = searchParams.get('scenario') ?? undefined;
 
     // Validate process param if provided
     if (process && !VALID_PROCESSES.includes(process)) {
@@ -21,8 +20,8 @@ export async function GET(request: NextRequest) {
     }
 
     let equipment = process
-      ? getEquipmentByProcess(process)
-      : getEquipmentList();
+      ? getEquipmentByProcess(process, scenario)
+      : getEquipmentList(scenario);
 
     // Filter by line if provided
     if (line) {

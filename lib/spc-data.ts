@@ -202,12 +202,55 @@ function buildSpcItem(
     }
   }
 
+  // ── "이상 발생" 헤더 시나리오 → 알람과 매칭되는 SPC 항목에 OOC 주입 ──
+  if (scenario === 'incident') {
+    const oocRange = base.usl - base.lsl;
+    // 알람 체인별로 대응하는 SPC 항목에 확실히 UCL/LCL 넘는 데이터 생성
+    if (base.key === 'etch_cd') {
+      // ETCH-001 알람: 압력 드리프트 → CD 상승 드리프트
+      for (let i = 18; i < 25; i++) {
+        values[i] = base.usl + oocRange * 0.05 * (i - 17);
+      }
+    }
+    if (base.key === 'dep_oxide_thickness') {
+      // CVD-001 알람: TEOS 유량 이상 → 두께 상한 초과
+      values[21] = base.usl + oocRange * 0.12;
+      values[23] = base.usl + oocRange * 0.08;
+    }
+    if (base.key === 'overlay_x') {
+      // LITHO-001 알람: 스테이지 열팽창 → overlay 시프트
+      for (let i = 16; i < 25; i++) {
+        values[i] = base.target + (base.usl - base.target) * 0.75;
+      }
+    }
+    if (base.key === 'cmp_uniformity') {
+      // CMP-002 알람: 패드 열화 → 균일도 악화
+      values[20] = base.usl + oocRange * 0.1;
+      values[22] = base.usl + oocRange * 0.15;
+      values[24] = base.usl + oocRange * 0.2;
+    }
+    if (base.key === 'diffusion_oxide_thickness') {
+      // DIFF-001 알람: Zone 온도 불균일 → 산화막 두께 하한 이탈
+      values[19] = base.lsl - oocRange * 0.08;
+      values[22] = base.lsl - oocRange * 0.12;
+    }
+  }
+
   const { mean, std } = calcStats(values);
   const { cp, cpk, pp, ppk } = calcCpk(values, base.usl, base.lsl);
   const latest = values[values.length - 1];
   const ucl = mean + 3 * std;
   const lcl = mean - 3 * std;
-  const oocViolations = evaluateOocRules(values, mean, std);
+  const allViolations = evaluateOocRules(values, mean, std);
+
+  // 정상 운전(시나리오 없음)에서는 Rule 1(±3σ 초과)만 적용
+  // 패턴 규칙(Rule 2,3,5,6)은 OOC 시나리오에서만 활성화
+  // → UCL/LCL 안에 있는데 "관리 이탈" 표시되는 오탐 방지
+  const isNormalOp = !scenario || scenario === 'NORMAL' || scenario === 'maintenance' || scenario === 'rampup';
+  const oocViolations = isNormalOp
+    ? allViolations.filter((v) => v.rule === 1)
+    : allViolations;
+
   let status: SpcItem['status'] = 'IN_CONTROL';
   if (oocViolations.length > 0) {
     const hasRule1 = oocViolations.some((v) => v.rule === 1);
